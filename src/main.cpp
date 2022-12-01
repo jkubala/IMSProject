@@ -5,15 +5,15 @@
 
 #include "window.hpp"
 #include "hexagonGUI.hpp"
+#include "text.hpp"
 
 // Max characters of the path that leads to png resources
 #define PATH_MAX 1024
-#define HEX_SIZE 64
+#define WINDOW_SIZE_X 1920
+#define WINDOW_SIZE_Y 1080
+#define HEX_SIZE 96
 #define N_OF_ROWS 20
 #define N_OF_COLS 10
-
-#define HEX_START_X 470
-#define HEX_START_Y 300
 void pollEvents(Window& window) {
     SDL_Event event;
 
@@ -25,21 +25,24 @@ void pollEvents(Window& window) {
     }
 }
 
-void CreateHexagonRow(int nOfHexagons, int startX, int startY, const std::string& imagePath, std::vector<HexagonGUI*>& hexagons)
+void CreateHexagonRow(int nOfHexagons, int rowStartX, int rowStartY, const std::string& imagePath, const std::string& fontPath, std::vector<HexagonGUI*>& hexagons)
 {
-    int horizontalOffset = startX; 
+    int horizontalOffset = rowStartX;
     for(int col = 0; col < nOfHexagons; col++)
     {
         // Offset the next hexagon from starting position 
-        horizontalOffset = startX + (HEX_SIZE + (HEX_SIZE / 2)) * col;
-        hexagons.emplace_back(new HexagonGUI(HEX_SIZE, HEX_SIZE, horizontalOffset, startY, imagePath));
+        horizontalOffset = rowStartX + (HEX_SIZE + (HEX_SIZE / 2)) * col;
+        HexagonGUI* newHexagon = new HexagonGUI(HEX_SIZE, HEX_SIZE, horizontalOffset, rowStartY, imagePath, fontPath);
+        hexagons.emplace_back(newHexagon);
     }
 }
 
 int main(int argc, char **argv)
 {
-    // Prepare window, hexagon list, get png resources and generate hexGrid
-    Window window(1920, 1080, "World map");
+    // Prepare window, anchors so that the map is centered, get png resources and generate hexGrid
+    Window window(WINDOW_SIZE_X, WINDOW_SIZE_Y, "World map");
+    int xAnchor = (WINDOW_SIZE_X - (N_OF_COLS * (HEX_SIZE + (HEX_SIZE / 2)))) / 2;
+    int yAnchor = (WINDOW_SIZE_Y - ((N_OF_ROWS + 1) * HEX_SIZE / 2)) / 2;
     char cwd[PATH_MAX];
     if (getcwd(cwd, sizeof(cwd)) == NULL)
     {
@@ -48,20 +51,21 @@ int main(int argc, char **argv)
     }
 
     std::vector<HexagonGUI*> hexagons;
-    const std::string friendlyHexagon = strcat(dirname(cwd), "/src/resources/hexagonFriendly.png");
-    const std::string enemyHexagon = strcat(dirname(cwd), "/src/resources/hexagonEnemy.png");
+    const std::string friendlyHexagonPath = std::string(dirname(cwd)) + "/src/resources/hexagonFriendly.png";
+    const std::string enemyHexagonPath = std::string(dirname(cwd)) + "/src/resources/hexagonEnemy.png";
+    const std::string fontPath = "/home/jankubala/Downloads/IMSProject/src/resources/arial.ttf";
 
-    int startHorizontalOffset = HEX_START_X;
-    int verticalOffset = HEX_START_Y;
+    int horizontalOffset = xAnchor;
+    int verticalOffset = yAnchor;
     int rowShift = HEX_SIZE * 0.75f;
 
     for (int row = 0; row < N_OF_ROWS; row++)
     {
         // Offset vertically by the amount of rows
-        verticalOffset = HEX_START_Y + (HEX_SIZE / 2 * row);
+        verticalOffset = yAnchor + (HEX_SIZE / 2 * row);
         // Every second row, shift hexagons to align with the row above them
-        row % 2 == 0 ? startHorizontalOffset = HEX_START_X : startHorizontalOffset += rowShift;
-        CreateHexagonRow(10, startHorizontalOffset, verticalOffset, friendlyHexagon.c_str(), hexagons);
+        row % 2 == 0 ? horizontalOffset = xAnchor : horizontalOffset += rowShift;
+        CreateHexagonRow(10, horizontalOffset, verticalOffset, friendlyHexagonPath, fontPath, hexagons);
     }
 
     while(!window.isClosed())

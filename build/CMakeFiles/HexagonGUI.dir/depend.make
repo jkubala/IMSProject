@@ -3,5 +3,6 @@
 
 CMakeFiles/HexagonGUI.dir/src/hexagonGUI.cpp.o: ../src/hexagonGUI.cpp
 CMakeFiles/HexagonGUI.dir/src/hexagonGUI.cpp.o: ../src/hexagonGUI.hpp
+CMakeFiles/HexagonGUI.dir/src/hexagonGUI.cpp.o: ../src/text.hpp
 CMakeFiles/HexagonGUI.dir/src/hexagonGUI.cpp.o: ../src/window.hpp
 

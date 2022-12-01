@@ -247,6 +247,33 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/IMSProject.dir/build.make CMakeFiles/IMSProject.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/text.o: src/text.cpp.o
+
+.PHONY : src/text.o
+
+# target to build an object file
+src/text.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IMSProject.dir/build.make CMakeFiles/IMSProject.dir/src/text.cpp.o
+.PHONY : src/text.cpp.o
+
+src/text.i: src/text.cpp.i
+
+.PHONY : src/text.i
+
+# target to preprocess a source file
+src/text.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IMSProject.dir/build.make CMakeFiles/IMSProject.dir/src/text.cpp.i
+.PHONY : src/text.cpp.i
+
+src/text.s: src/text.cpp.s
+
+.PHONY : src/text.s
+
+# target to generate assembly for a file
+src/text.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IMSProject.dir/build.make CMakeFiles/IMSProject.dir/src/text.cpp.s
+.PHONY : src/text.cpp.s
+
 src/window.o: src/window.cpp.o
 
 .PHONY : src/window.o
@@ -296,6 +323,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/text.o"
+	@echo "... src/text.i"
+	@echo "... src/text.s"
 	@echo "... src/window.o"
 	@echo "... src/window.i"
 	@echo "... src/window.s"

@@ -12,6 +12,7 @@ Window::~Window()
 {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    TTF_Quit();
     IMG_Quit();
     SDL_Quit();
 }
@@ -26,7 +27,13 @@ bool Window::init()
 
     if(IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
     {
-        std::cerr << "Failed to initialize SDL_iamge!\n";
+        std::cerr << "Failed to initialize SDL_image!\n";
+        return false;
+    }
+
+    if(TTF_Init() == -1)
+    {
+                std::cerr << "Failed to initialize SDL_ttf!\n";
         return false;
     }
 

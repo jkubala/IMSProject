@@ -323,6 +323,12 @@ MEMORYCHECK_SUPPRESSIONS_FILE:FILEPATH=
 //Path to a program.
 P4COMMAND:FILEPATH=P4COMMAND-NOTFOUND
 
+//Path to a file.
+SDL_TTF_INCLUDE_DIR:PATH=SDL_TTF_INCLUDE_DIR-NOTFOUND
+
+//Path to a library.
+SDL_TTF_LIBRARY:FILEPATH=SDL_TTF_LIBRARY-NOTFOUND
+
 //Name of the computer/site where compile is being run
 SITE:STRING=localhost.localdomain
 
@@ -334,6 +340,12 @@ SLURM_SRUN_COMMAND:FILEPATH=SLURM_SRUN_COMMAND-NOTFOUND
 
 //Path to a program.
 SVNCOMMAND:FILEPATH=SVNCOMMAND-NOTFOUND
+
+//Value Computed by CMake
+island_soldier_BINARY_DIR:STATIC=/home/jankubala/Downloads/IMSProject/build
+
+//Value Computed by CMake
+island_soldier_SOURCE_DIR:STATIC=/home/jankubala/Downloads/IMSProject
 
 
 ########################

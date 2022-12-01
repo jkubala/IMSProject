@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/jankubala/Downloads/IMSProject/src/hexagonGUI.cpp" "/home/jankubala/Downloads/IMSProject/build/CMakeFiles/IMSProject.dir/src/hexagonGUI.cpp.o"
   "/home/jankubala/Downloads/IMSProject/src/main.cpp" "/home/jankubala/Downloads/IMSProject/build/CMakeFiles/IMSProject.dir/src/main.cpp.o"
+  "/home/jankubala/Downloads/IMSProject/src/text.cpp" "/home/jankubala/Downloads/IMSProject/build/CMakeFiles/IMSProject.dir/src/text.cpp.o"
   "/home/jankubala/Downloads/IMSProject/src/window.cpp" "/home/jankubala/Downloads/IMSProject/build/CMakeFiles/IMSProject.dir/src/window.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

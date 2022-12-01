@@ -1706,6 +1706,30 @@
 			"value" : "P4COMMAND-NOTFOUND"
 		},
 		{
+			"name" : "SDL_TTF_INCLUDE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a file."
+				}
+			],
+			"type" : "PATH",
+			"value" : "SDL_TTF_INCLUDE_DIR-NOTFOUND"
+		},
+		{
+			"name" : "SDL_TTF_LIBRARY",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "SDL_TTF_LIBRARY-NOTFOUND"
+		},
+		{
 			"name" : "SITE",
 			"properties" : 
 			[
@@ -1768,6 +1792,30 @@
 			],
 			"type" : "FILEPATH",
 			"value" : "SVNCOMMAND-NOTFOUND"
+		},
+		{
+			"name" : "island_soldier_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/jankubala/Downloads/IMSProject/build"
+		},
+		{
+			"name" : "island_soldier_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/jankubala/Downloads/IMSProject"
 		}
 	],
 	"kind" : "cache",

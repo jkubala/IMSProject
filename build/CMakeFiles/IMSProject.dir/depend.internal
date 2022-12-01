@@ -4,11 +4,16 @@
 CMakeFiles/IMSProject.dir/src/hexagonGUI.cpp.o
  /home/jankubala/Downloads/IMSProject/src/hexagonGUI.cpp
  /home/jankubala/Downloads/IMSProject/src/hexagonGUI.hpp
+ /home/jankubala/Downloads/IMSProject/src/text.hpp
  /home/jankubala/Downloads/IMSProject/src/window.hpp
 CMakeFiles/IMSProject.dir/src/main.cpp.o
  /home/jankubala/Downloads/IMSProject/src/hexagonGUI.hpp
  /home/jankubala/Downloads/IMSProject/src/main.cpp
+ /home/jankubala/Downloads/IMSProject/src/text.hpp
  /home/jankubala/Downloads/IMSProject/src/window.hpp
+CMakeFiles/IMSProject.dir/src/text.cpp.o
+ /home/jankubala/Downloads/IMSProject/src/text.cpp
+ /home/jankubala/Downloads/IMSProject/src/text.hpp
 CMakeFiles/IMSProject.dir/src/window.cpp.o
  /home/jankubala/Downloads/IMSProject/src/window.cpp
  /home/jankubala/Downloads/IMSProject/src/window.hpp
