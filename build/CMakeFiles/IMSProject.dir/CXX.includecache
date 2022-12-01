@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jankubala/Downloads/IMSProject/src/main.cpp
+iostream
+-
+window.hpp
+/home/jankubala/Downloads/IMSProject/src/window.hpp
+
+/home/jankubala/Downloads/IMSProject/src/window.hpp
+string
+-
+SDL2/SDL.h
+-
+

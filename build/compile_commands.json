@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/home/jankubala/Downloads/IMSProject/build",
+  "command": "/usr/bin/c++   -g -o CMakeFiles/Window.dir/src/window.cpp.o -c /home/jankubala/Downloads/IMSProject/src/window.cpp",
+  "file": "/home/jankubala/Downloads/IMSProject/src/window.cpp"
+},
+{
+  "directory": "/home/jankubala/Downloads/IMSProject/build",
+  "command": "/usr/bin/c++   -g -o CMakeFiles/IMSProject.dir/src/main.cpp.o -c /home/jankubala/Downloads/IMSProject/src/main.cpp",
+  "file": "/home/jankubala/Downloads/IMSProject/src/main.cpp"
+},
+{
+  "directory": "/home/jankubala/Downloads/IMSProject/build",
+  "command": "/usr/bin/c++   -g -o CMakeFiles/IMSProject.dir/src/window.cpp.o -c /home/jankubala/Downloads/IMSProject/src/window.cpp",
+  "file": "/home/jankubala/Downloads/IMSProject/src/window.cpp"
+}
+]

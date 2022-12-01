@@ -1,0 +1,1 @@
+/usr/bin/c++ -g -rdynamic CMakeFiles/IMSProject.dir/src/main.cpp.o CMakeFiles/IMSProject.dir/src/window.cpp.o -o IMSProject  libWindow.a -lSDL2main -lSDL2 
