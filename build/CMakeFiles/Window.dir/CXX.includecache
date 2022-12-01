@@ -10,11 +10,13 @@
 window.hpp
 /home/jankubala/Downloads/IMSProject/src/window.hpp
 iostream
-/home/jankubala/Downloads/IMSProject/src/iostream
+-
 
 /home/jankubala/Downloads/IMSProject/src/window.hpp
 string
 -
 SDL2/SDL.h
+-
+SDL2/SDL_image.h
 -
 

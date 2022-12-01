@@ -1,0 +1,2 @@
+/usr/bin/ar qc libHexagonGUI.a CMakeFiles/HexagonGUI.dir/src/hexagonGUI.cpp.o
+/usr/bin/ranlib libHexagonGUI.a

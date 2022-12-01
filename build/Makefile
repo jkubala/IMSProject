@@ -165,6 +165,19 @@ IMSProject/fast:
 .PHONY : IMSProject/fast
 
 #=============================================================================
+# Target rules for targets named HexagonGUI
+
+# Build rule for target.
+HexagonGUI: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 HexagonGUI
+.PHONY : HexagonGUI
+
+# fast build rule for target.
+HexagonGUI/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HexagonGUI.dir/build.make CMakeFiles/HexagonGUI.dir/build
+.PHONY : HexagonGUI/fast
+
+#=============================================================================
 # Target rules for targets named Window
 
 # Build rule for target.
@@ -176,6 +189,36 @@ Window: cmake_check_build_system
 Window/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Window.dir/build.make CMakeFiles/Window.dir/build
 .PHONY : Window/fast
+
+src/hexagonGUI.o: src/hexagonGUI.cpp.o
+
+.PHONY : src/hexagonGUI.o
+
+# target to build an object file
+src/hexagonGUI.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IMSProject.dir/build.make CMakeFiles/IMSProject.dir/src/hexagonGUI.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HexagonGUI.dir/build.make CMakeFiles/HexagonGUI.dir/src/hexagonGUI.cpp.o
+.PHONY : src/hexagonGUI.cpp.o
+
+src/hexagonGUI.i: src/hexagonGUI.cpp.i
+
+.PHONY : src/hexagonGUI.i
+
+# target to preprocess a source file
+src/hexagonGUI.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IMSProject.dir/build.make CMakeFiles/IMSProject.dir/src/hexagonGUI.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HexagonGUI.dir/build.make CMakeFiles/HexagonGUI.dir/src/hexagonGUI.cpp.i
+.PHONY : src/hexagonGUI.cpp.i
+
+src/hexagonGUI.s: src/hexagonGUI.cpp.s
+
+.PHONY : src/hexagonGUI.s
+
+# target to generate assembly for a file
+src/hexagonGUI.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IMSProject.dir/build.make CMakeFiles/IMSProject.dir/src/hexagonGUI.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HexagonGUI.dir/build.make CMakeFiles/HexagonGUI.dir/src/hexagonGUI.cpp.s
+.PHONY : src/hexagonGUI.cpp.s
 
 src/main.o: src/main.cpp.o
 
@@ -244,8 +287,12 @@ help:
 	@echo "... package"
 	@echo "... package_source"
 	@echo "... rebuild_cache"
+	@echo "... HexagonGUI"
 	@echo "... IMSProject"
 	@echo "... Window"
+	@echo "... src/hexagonGUI.o"
+	@echo "... src/hexagonGUI.i"
+	@echo "... src/hexagonGUI.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

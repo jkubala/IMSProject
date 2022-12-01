@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/IMSProject.dir/src/hexagonGUI.cpp.o"
   "CMakeFiles/IMSProject.dir/src/main.cpp.o"
   "CMakeFiles/IMSProject.dir/src/window.cpp.o"
   "IMSProject"

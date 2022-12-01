@@ -6,11 +6,15 @@
 
 #IncludeRegexTransform: 
 
-/home/jankubala/Downloads/IMSProject/src/window.cpp
-window.hpp
-/home/jankubala/Downloads/IMSProject/src/window.hpp
+/home/jankubala/Downloads/IMSProject/src/hexagonGUI.cpp
+hexagonGUI.hpp
+/home/jankubala/Downloads/IMSProject/src/hexagonGUI.hpp
 iostream
 -
+
+/home/jankubala/Downloads/IMSProject/src/hexagonGUI.hpp
+window.hpp
+/home/jankubala/Downloads/IMSProject/src/window.hpp
 
 /home/jankubala/Downloads/IMSProject/src/window.hpp
 string

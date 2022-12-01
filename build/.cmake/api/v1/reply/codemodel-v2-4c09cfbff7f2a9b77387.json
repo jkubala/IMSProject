@@ -15,7 +15,8 @@
 					"targetIndexes" : 
 					[
 						0,
-						1
+						1,
+						2
 					]
 				}
 			],
@@ -31,7 +32,8 @@
 					"targetIndexes" : 
 					[
 						0,
-						1
+						1,
+						2
 					]
 				}
 			],
@@ -39,8 +41,15 @@
 			[
 				{
 					"directoryIndex" : 0,
+					"id" : "HexagonGUI::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-HexagonGUI-Debug-14066c5ebe02f86d663f.json",
+					"name" : "HexagonGUI",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
 					"id" : "IMSProject::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-IMSProject-Debug-6e116f097d3863490b43.json",
+					"jsonFile" : "target-IMSProject-Debug-0829d33439290283a267.json",
 					"name" : "IMSProject",
 					"projectIndex" : 0
 				},

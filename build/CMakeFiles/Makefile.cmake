@@ -44,5 +44,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/IMSProject.dir/DependInfo.cmake"
+  "CMakeFiles/HexagonGUI.dir/DependInfo.cmake"
   "CMakeFiles/Window.dir/DependInfo.cmake"
   )

@@ -7,7 +7,13 @@ add_library(
     src/window.cpp
 )
 
-add_executable(IMSProject src/main.cpp src/window.hpp src/window.cpp)
+add_library(
+    HexagonGUI
+    src/hexagonGUI.hpp
+    src/hexagonGUI.cpp
+)
+
+add_executable(IMSProject src/main.cpp src/window.hpp src/window.cpp src/hexagonGUI.hpp src/hexagonGUI.cpp)
 
 
-target_link_libraries(IMSProject PRIVATE Window SDL2main SDL2)
+target_link_libraries(IMSProject PRIVATE Window SDL2main SDL2 SDL2_image)
