@@ -2,7 +2,7 @@
 #include <iostream>
 #include <sstream>
 
-HexagonGUI::HexagonGUI(int w, int h, int x, int y, const std::string& imagePath, const std::string& fontPath) : w(w), h(h), x(x), y(y)
+HexagonGUI::HexagonGUI(int size, int x, int y, const std::string& imagePath, const std::string& fontPath) : size(size), x(x), y(y)
 {
     SDL_Surface* surface = IMG_Load(imagePath.c_str());
     if(!surface)
@@ -17,7 +17,7 @@ HexagonGUI::HexagonGUI(int w, int h, int x, int y, const std::string& imagePath,
     }
     SDL_FreeSurface(surface);
 
-    int fontSize = h / getLongerLine(stringWithText).length();
+    int fontSize = size / getLongerLine(stringWithText).length();
     textElement = new Text(Window::renderer, fontPath, fontSize, stringWithText, {0, 0, 0, 255});
 }
 
@@ -50,10 +50,10 @@ void HexagonGUI::draw()
     int stringWidth = 0;
     int stringHeight = 0;
     TTF_SizeText(textElement->font, getLongerLine(stringWithText).c_str(), &stringWidth, &stringHeight);
-    textXOffset = x + ((w  - stringWidth) / 2);
+    textXOffset = x + ((size  - stringWidth) / 2);
     // Multiply by two to account for the two strings being above each other
-    textYOffset = y + ((h - (stringHeight * 2)) / 2);
-    SDL_Rect rect = { x, y, w, h};
+    textYOffset = y + ((size - (stringHeight * 2)) / 2);
+    SDL_Rect rect = { x, y, size, size};
 
     if(hexagonTexture)
     {

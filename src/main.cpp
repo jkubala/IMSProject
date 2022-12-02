@@ -59,7 +59,7 @@ int main(int argc, char **argv)
             // Shift every second column in a row down by half a hexagon
             r % 2 == 1 ? verticalOffset = yAnchor + (q * HEX_SIZE) + colShift : verticalOffset = yAnchor + (q * HEX_SIZE);
             horizontalOffset = xAnchor + (r * (HEX_SIZE * 0.75));
-            HexagonGUI* newHexagonGUI = new HexagonGUI(HEX_SIZE, HEX_SIZE, horizontalOffset, verticalOffset, friendlyHexagonPath, fontPath);
+            HexagonGUI* newHexagonGUI = new HexagonGUI(HEX_SIZE, horizontalOffset, verticalOffset, friendlyHexagonPath, fontPath);
             HexagonField newHexagonField = HexagonField(q, r, -q-r);
             newHexagonField.gui = newHexagonGUI;
             map.insert(newHexagonField);

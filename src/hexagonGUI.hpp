@@ -9,7 +9,7 @@
 class HexagonGUI
 {
 public:
-    HexagonGUI(int w, int h, int x, int y, const std::string& imagePath, const std::string& fontPath);
+    HexagonGUI(int size, int x, int y, const std::string& imagePath, const std::string& fontPath);
     ~HexagonGUI();
 
     void draw();
@@ -17,7 +17,7 @@ public:
 private:
     std::string getLongerLine (std::string& stringToAnalyze);
 
-    int w, h, x, y;
+    int size, x, y;
     mutable int textXOffset, textYOffset;
     SDL_Texture* hexagonTexture = nullptr;
     std::string stringWithText = "T: 10\nP: 100";

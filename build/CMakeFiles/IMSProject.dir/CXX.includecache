@@ -6,6 +6,10 @@
 
 #IncludeRegexTransform: 
 
+/home/jankubala/Downloads/IMSProject/src/hexagonField.cpp
+hexagonField.hpp
+/home/jankubala/Downloads/IMSProject/src/hexagonField.hpp
+
 /home/jankubala/Downloads/IMSProject/src/hexagonField.hpp
 assert.h
 -
@@ -13,6 +17,14 @@ vector
 -
 hexagonGUI.hpp
 /home/jankubala/Downloads/IMSProject/src/hexagonGUI.hpp
+
+/home/jankubala/Downloads/IMSProject/src/hexagonGUI.cpp
+hexagonGUI.hpp
+/home/jankubala/Downloads/IMSProject/src/hexagonGUI.hpp
+iostream
+-
+sstream
+-
 
 /home/jankubala/Downloads/IMSProject/src/hexagonGUI.hpp
 window.hpp
