@@ -97,12 +97,12 @@ clean: CMakeFiles/Window.dir/clean
 CMakeFiles/IMSProject.dir/all: CMakeFiles/Window.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/IMSProject.dir/build.make CMakeFiles/IMSProject.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/IMSProject.dir/build.make CMakeFiles/IMSProject.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/jankubala/Downloads/IMSProject/build/CMakeFiles --progress-num=3,4,5,6,7 "Built target IMSProject"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/jankubala/Downloads/IMSProject/build/CMakeFiles --progress-num=3,4,5,6,7,8 "Built target IMSProject"
 .PHONY : CMakeFiles/IMSProject.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/IMSProject.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/jankubala/Downloads/IMSProject/build/CMakeFiles 7
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jankubala/Downloads/IMSProject/build/CMakeFiles 8
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/IMSProject.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/jankubala/Downloads/IMSProject/build/CMakeFiles 0
 .PHONY : CMakeFiles/IMSProject.dir/rule
@@ -151,7 +151,7 @@ CMakeFiles/HexagonGUI.dir/clean:
 CMakeFiles/Window.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Window.dir/build.make CMakeFiles/Window.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Window.dir/build.make CMakeFiles/Window.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/jankubala/Downloads/IMSProject/build/CMakeFiles --progress-num=8,9 "Built target Window"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/jankubala/Downloads/IMSProject/build/CMakeFiles --progress-num=9,10 "Built target Window"
 .PHONY : CMakeFiles/Window.dir/all
 
 # Build rule for subdir invocation for target.

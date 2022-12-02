@@ -28,6 +28,10 @@
         "type_traits": "cpp",
         "typeinfo": "cpp",
         "utility": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "optional": "cpp",
+        "array": "cpp",
+        "unordered_set": "cpp",
+        "tuple": "cpp"
     }
 }

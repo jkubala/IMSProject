@@ -190,6 +190,33 @@ Window/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Window.dir/build.make CMakeFiles/Window.dir/build
 .PHONY : Window/fast
 
+src/hexagonField.o: src/hexagonField.cpp.o
+
+.PHONY : src/hexagonField.o
+
+# target to build an object file
+src/hexagonField.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IMSProject.dir/build.make CMakeFiles/IMSProject.dir/src/hexagonField.cpp.o
+.PHONY : src/hexagonField.cpp.o
+
+src/hexagonField.i: src/hexagonField.cpp.i
+
+.PHONY : src/hexagonField.i
+
+# target to preprocess a source file
+src/hexagonField.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IMSProject.dir/build.make CMakeFiles/IMSProject.dir/src/hexagonField.cpp.i
+.PHONY : src/hexagonField.cpp.i
+
+src/hexagonField.s: src/hexagonField.cpp.s
+
+.PHONY : src/hexagonField.s
+
+# target to generate assembly for a file
+src/hexagonField.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IMSProject.dir/build.make CMakeFiles/IMSProject.dir/src/hexagonField.cpp.s
+.PHONY : src/hexagonField.cpp.s
+
 src/hexagonGUI.o: src/hexagonGUI.cpp.o
 
 .PHONY : src/hexagonGUI.o
@@ -317,6 +344,9 @@ help:
 	@echo "... HexagonGUI"
 	@echo "... IMSProject"
 	@echo "... Window"
+	@echo "... src/hexagonField.o"
+	@echo "... src/hexagonField.i"
+	@echo "... src/hexagonField.s"
 	@echo "... src/hexagonGUI.o"
 	@echo "... src/hexagonGUI.i"
 	@echo "... src/hexagonGUI.s"

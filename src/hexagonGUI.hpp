@@ -26,4 +26,5 @@ public:
     void updateTextString(int nOfTanks, int nOfSoldiers);
     Text* textElement = nullptr;
 };
+
 #endif

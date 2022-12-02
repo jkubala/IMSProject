@@ -26,6 +26,11 @@
 },
 {
   "directory": "/home/jankubala/Downloads/IMSProject/build",
+  "command": "/usr/bin/c++   -g -o CMakeFiles/IMSProject.dir/src/hexagonField.cpp.o -c /home/jankubala/Downloads/IMSProject/src/hexagonField.cpp",
+  "file": "/home/jankubala/Downloads/IMSProject/src/hexagonField.cpp"
+},
+{
+  "directory": "/home/jankubala/Downloads/IMSProject/build",
   "command": "/usr/bin/c++   -g -o CMakeFiles/HexagonGUI.dir/src/hexagonGUI.cpp.o -c /home/jankubala/Downloads/IMSProject/src/hexagonGUI.cpp",
   "file": "/home/jankubala/Downloads/IMSProject/src/hexagonGUI.cpp"
 }

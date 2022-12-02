@@ -6,6 +6,14 @@
 
 #IncludeRegexTransform: 
 
+/home/jankubala/Downloads/IMSProject/src/hexagonField.hpp
+assert.h
+-
+vector
+-
+hexagonGUI.hpp
+/home/jankubala/Downloads/IMSProject/src/hexagonGUI.hpp
+
 /home/jankubala/Downloads/IMSProject/src/hexagonGUI.hpp
 window.hpp
 /home/jankubala/Downloads/IMSProject/src/window.hpp
@@ -23,12 +31,10 @@ libgen.h
 -
 vector
 -
-window.hpp
-/home/jankubala/Downloads/IMSProject/src/window.hpp
-hexagonGUI.hpp
-/home/jankubala/Downloads/IMSProject/src/hexagonGUI.hpp
-text.hpp
-/home/jankubala/Downloads/IMSProject/src/text.hpp
+unordered_set
+-
+hexagonField.hpp
+/home/jankubala/Downloads/IMSProject/src/hexagonField.hpp
 
 /home/jankubala/Downloads/IMSProject/src/text.hpp
 SDL2/SDL_ttf.h
