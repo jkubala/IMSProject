@@ -1,9 +1,17 @@
 #include "text.hpp"
 #include <iostream>
 
-    Text::Text(SDL_Renderer* renderer, const std::string &fontPath, int fontSize, const std::string& messageText, const SDL_Color& color)
+    Text::Text(SDL_Renderer* aRenderer, std::string aFontPath, int aFontSize, const std::string& messageText)
     {
-        textTexture = loadFont(renderer, fontPath, fontSize, messageText, color);
+        this->renderer = aRenderer;
+        this->fontPath = aFontPath;
+        this->fontSize = aFontSize;
+        UpdateText(messageText);
+    }
+
+    void Text::UpdateText(const std::string& newString)
+    {
+        textTexture = loadFont(renderer, fontPath, fontSize, newString);
         SDL_QueryTexture(textTexture, nullptr, nullptr, &textRect.w, &textRect.h);
     }
 
@@ -14,7 +22,7 @@
         SDL_RenderCopy(renderer, textTexture, nullptr, &textRect);
     }
 
-    SDL_Texture* Text::loadFont(SDL_Renderer* renderer, const std::string &fontPath, int fontSize, const std::string& messageText, const SDL_Color& color)
+    SDL_Texture* Text::loadFont(SDL_Renderer* renderer, const std::string &fontPath, int fontSize, const std::string& messageText)
     {
         this->font = TTF_OpenFont(fontPath.c_str(), fontSize);
         if(!font)

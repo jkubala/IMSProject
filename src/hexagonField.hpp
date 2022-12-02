@@ -30,17 +30,8 @@ public:
     }
 
     HexagonGUI* gui = nullptr;
+    int nOfTanksPresent = 0;
+    int nOfFootmenPresent = 0;
+    int playerControlling = 0;
 };
-
-namespace std
-{
-  template<>
-    struct hash<HexagonField>
-    {
-      size_t operator()(const HexagonField & obj) const
-      {
-        return hash<int>()(obj.q);
-      }
-    };
-}
 #endif

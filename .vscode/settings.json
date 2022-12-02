@@ -32,6 +32,19 @@
         "optional": "cpp",
         "array": "cpp",
         "unordered_set": "cpp",
-        "tuple": "cpp"
+        "tuple": "cpp",
+        "chrono": "cpp",
+        "atomic": "cpp",
+        "bit": "cpp",
+        "ctime": "cpp",
+        "memory": "cpp",
+        "ranges": "cpp",
+        "ratio": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp",
+        "condition_variable": "cpp",
+        "future": "cpp",
+        "mutex": "cpp",
+        "unordered_map": "cpp"
     }
 }

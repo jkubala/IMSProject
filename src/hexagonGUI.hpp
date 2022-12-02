@@ -20,7 +20,7 @@ private:
     int size, x, y;
     mutable int textXOffset, textYOffset;
     SDL_Texture* hexagonTexture = nullptr;
-    std::string stringWithText = "T: 10\nP: 100";
+    std::string stringWithText = "T: 10SUS\nP: 100";
 
 public:
     void updateTextString(int nOfTanks, int nOfSoldiers);

@@ -2,7 +2,8 @@
 #include <unistd.h>
 #include <libgen.h>
 #include <vector>
-#include <unordered_set>
+#include <chrono>
+#include <thread>
 #include "hexagonField.hpp"
 
 // Max characters of the path that leads to png resources
@@ -23,9 +24,11 @@ void pollEvents(Window& window) {
     }
 }
 
-void CreateHexagonRow(int nOfHexagons, int rowStartX, int rowStartY, const std::string& imagePath, const std::string& fontPath, std::vector<HexagonGUI*>& hexagons)
+unsigned int aiStep(unsigned int interval, void * param)
 {
-
+    std::vector<HexagonField*>* map = static_cast<std::vector<HexagonField*>*>(param);
+    (*map)[0]->gui->updateTextString((*map)[0]->q, (*map)[0]->r);
+    return interval;
 }
 
 int main(int argc, char **argv)
@@ -50,7 +53,7 @@ int main(int argc, char **argv)
     int verticalOffset = yAnchor;
     int colShift = HEX_SIZE * 0.5f;
 
-    std::unordered_set <HexagonField> map;
+    std::vector <HexagonField*> map;
     for (int q = 0; q < N_OF_ROWS; q++)
     {
         verticalOffset = yAnchor + (HEX_SIZE * q);
@@ -59,18 +62,20 @@ int main(int argc, char **argv)
             // Shift every second column in a row down by half a hexagon
             r % 2 == 1 ? verticalOffset = yAnchor + (q * HEX_SIZE) + colShift : verticalOffset = yAnchor + (q * HEX_SIZE);
             horizontalOffset = xAnchor + (r * (HEX_SIZE * 0.75));
-            HexagonField newHexagonField = HexagonField(q, r, -q-r, HEX_SIZE, horizontalOffset, verticalOffset, friendlyHexagonPath, fontPath);
-            map.insert(newHexagonField);
+            HexagonField* newHexagonField = new HexagonField(q, r, -q-r, HEX_SIZE, horizontalOffset, verticalOffset, friendlyHexagonPath, fontPath);
+            map.push_back(newHexagonField);
         }
     }
 
+
+    SDL_TimerID aiStepTimer = SDL_AddTimer(3000, aiStep, &map);
     while(!window.isClosed())
     {
-        for(HexagonField hexagonField : map)
+        for(HexagonField* hexagonField : map)
         {
-            if(hexagonField.gui != nullptr)
+            if(hexagonField->gui != nullptr)
             {
-                hexagonField.gui->draw();
+                hexagonField->gui->draw();
             }
             else
             {
@@ -80,6 +85,11 @@ int main(int argc, char **argv)
         }
         window.clear();
         pollEvents(window);
+    }
+    SDL_RemoveTimer(aiStepTimer);
+    for(HexagonField* hexagonField : map)
+    {
+        delete(hexagonField);
     }
 
     return 0;

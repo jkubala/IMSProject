@@ -18,7 +18,7 @@ HexagonGUI::HexagonGUI(int size, int x, int y, const std::string& imagePath, con
     SDL_FreeSurface(surface);
 
     int fontSize = size / getLongerLine(stringWithText).length();
-    textElement = new Text(Window::renderer, fontPath, fontSize, stringWithText, {0, 0, 0, 255});
+    textElement = new Text(Window::renderer, fontPath, fontSize, stringWithText);
 }
 
 HexagonGUI::~HexagonGUI()
@@ -42,7 +42,13 @@ std::string HexagonGUI::getLongerLine (std::string& stringToAnalyze)
 
 void HexagonGUI::updateTextString(int nOfTanks, int nOfSoldiers)
 {
-    stringWithText = std::string("T: ") + std::to_string(nOfTanks) + std::string("\nP: ") + std::to_string(nOfSoldiers);
+    std::string newString = std::string("T: ") + std::to_string(nOfTanks) + std::string("\nP: ") + std::to_string(nOfSoldiers);
+    if(stringWithText != newString)
+    {
+        stringWithText = newString;
+        std::cout << "BRUUUH" << newString;
+        textElement->UpdateText(stringWithText);
+    }
 }
 
 void HexagonGUI::draw()
