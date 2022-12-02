@@ -1,5 +1,11 @@
 #include "hexagonField.hpp"
 
+HexagonField::HexagonField(int q, int r, int s, int size, int horizontalOffset, int verticalOffset, std::string imagePath, std::string fontPath): q(q), r(r), s(s)
+{
+    assert (q + r + s == 0);
+    this->gui = new HexagonGUI(size, horizontalOffset, verticalOffset, imagePath, fontPath);
+}
+
 HexagonField::HexagonField(int q, int r, int s): q(q), r(r), s(s)
 {
     assert (q + r + s == 0);
