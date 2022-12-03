@@ -2,23 +2,33 @@
 #include <iostream>
 #include <sstream>
 
-HexagonGUI::HexagonGUI(int size, int x, int y, const std::string& imagePath, const std::string& fontPath) : size(size), x(x), y(y)
+HexagonGUI::HexagonGUI(int size, int x, int y, int lastFieldOfTrenchPlayer, const std::string& aTrenchImagePath, const std::string& aMobileImagePath, const std::string& fontPath) : size(size), x(x), y(y)
 {
-    updateImage(imagePath);
+    trenchImagePath = aTrenchImagePath;
+    mobileImagePath = aMobileImagePath;
+    updateImageToPlayer(lastFieldOfTrenchPlayer);
     int fontSize = size / getLongerLine(stringWithText).length();
     textElement = new Text(Window::renderer, fontPath, fontSize, stringWithText);
 }
 
-void HexagonGUI::updateImage(const std::string& imagePath)
+void HexagonGUI::updateImageToPlayer(int idOfPlayer)
 {
     if(hexagonTexture != nullptr)
     {
         SDL_DestroyTexture(hexagonTexture);
     }
-    SDL_Surface* surface = IMG_Load(imagePath.c_str());
+    SDL_Surface* surface = nullptr;
+    if(idOfPlayer == 0)
+    {
+        surface = IMG_Load(trenchImagePath.c_str());   
+    }
+    else
+    {
+        surface = IMG_Load(mobileImagePath.c_str());   
+    }
     if(!surface)
     {
-        std::cerr << "Failed to create surface! " << imagePath.c_str() << "\nError: " << IMG_GetError() <<  std::endl;
+        std::cerr << "Failed to create surface! " << trenchImagePath.c_str() << "\nError: " << IMG_GetError() <<  std::endl;
     }
 
     hexagonTexture = SDL_CreateTextureFromSurface(Window::renderer, surface);

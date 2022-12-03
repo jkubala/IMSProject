@@ -9,7 +9,7 @@ class HexagonField
 public:
     const int q, r, s;
     HexagonField(int q, int r, int s);
-    HexagonField(int q, int r, int s, int size, int horizontalOffset, int verticalOffset, std::string imagePath, std::string fontPath);
+    HexagonField(int q, int r, int s, int size, int horizontalOffset, int verticalOffset, int lastFieldOfTrenchPlayer, std::string trenchImagePath, std::string mobileImagePath, std::string fontPath);
     ~HexagonField();
     HexagonField hexagonAdd(HexagonField a, HexagonField b);
     HexagonField hexagonSubtract(HexagonField a, HexagonField b);
@@ -30,9 +30,11 @@ public:
         return !(*this == comparedHex);
     }
 
+    void changeOwner(int idOfPlayer);
+
     HexagonGUI* gui = nullptr;
     int nOfTanksPresent = 0;
     int nOfFootmenPresent = 0;
-    int playerControlling = 0;
+    int idOfPlayerControlling = 0;
 };
 #endif

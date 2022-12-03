@@ -9,7 +9,7 @@
 class HexagonGUI
 {
 public:
-    HexagonGUI(int size, int x, int y, const std::string& imagePath, const std::string& fontPath);
+    HexagonGUI(int size, int x, int y, int lastFieldOfTrenchPlayer, const std::string& aTrenchImagePath, const std::string& aMobileImagePath, const std::string& fontPath);
     ~HexagonGUI();
 
     void draw();
@@ -20,11 +20,13 @@ private:
     int size, x, y;
     mutable int textXOffset, textYOffset;
     SDL_Texture* hexagonTexture = nullptr;
-    std::string stringWithText = "T: 10SUS\nP: 100";
+    std::string stringWithText = "T: 0\nP: 0";
+    std::string mobileImagePath;
+    std::string trenchImagePath;
 
 public:
     void updateTextString(int nOfTanks, int nOfSoldiers);
-    void updateImage(const std::string& imagePath);
+    void updateImageToPlayer(int idOfPlayer);
     Text* textElement = nullptr;
 };
 
