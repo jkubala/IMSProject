@@ -4,6 +4,7 @@
 #include <vector>
 #include <chrono>
 #include <thread>
+#include <algorithm>
 #include "hexagonField.hpp"
 
 // Max characters of the path that leads to png resources
@@ -16,9 +17,9 @@
 
 std::string trenchHexagonPath;
 std::string mobileHexagonPath;
-std::vector <HexagonField*> map;
-std::vector <HexagonField*> mobileHexes;
-std::vector <HexagonField*> trenchHexes;
+std::vector <HexagonField> map;
+std::vector <HexagonField> mobileHexes;
+std::vector <HexagonField> trenchHexes;
 
 bool playerOnTurn = 0;
 
@@ -35,20 +36,59 @@ void pollEvents(Window& window) {
 
 void redrawGUI(Window* window)
 {
-    for(HexagonField* hexagonField : map)
+    for(HexagonField hexagonField : map)
     {
-        hexagonField->redrawGUI();
+        hexagonField.redrawGUI();
     }
     window->clear();
 }
 
+void getFieldFromMapAndAssignAsNeighbour(HexagonField* hexagonToSearchFor, HexagonField* hexagonToAssignTo, int neighbourToInsertInto)
+{
+    std::vector<HexagonField>::iterator it;
+    it = std::find(map.begin(), map.end(), *hexagonToSearchFor);
+    if(it != map.end())
+    {
+        hexagonToAssignTo->neighbours[neighbourToInsertInto] = &map[it - map.begin()];
+    }
+}
+
+void initHexagonNeighbours()
+{
+    for(HexagonField hexagon : map)
+    {
+        HexagonField hexagonNeighbourTop(hexagon.q, hexagon.r - 1, hexagon.s + 1);
+        HexagonField hexagonNeighbourRightTop(hexagon.q + 1, hexagon.r - 1, hexagon.s);
+        HexagonField hexagonNeighbourRightDown(hexagon.q + 1, hexagon.r, hexagon.s - 1);
+        HexagonField hexagonNeighbourDown(hexagon.q, hexagon.r + 1, hexagon.s - 1);
+        HexagonField hexagonNeighbourLeftDown(hexagon.q - 1, hexagon.r + 1, hexagon.s);
+        HexagonField hexagonNeighbourLeftTop(hexagon.q - 1, hexagon.r, hexagon.s + 1);
+
+        getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourTop, &hexagon, 0);
+        getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourRightTop, &hexagon, 1);
+        getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourRightDown, &hexagon, 2);
+        getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourDown, &hexagon, 3);
+        getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourLeftDown, &hexagon, 4);
+        getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourLeftTop, &hexagon, 5);
+    }
+}
+
 unsigned int aiStep(unsigned int interval, void * param)
 {
+    std::vector <HexagonField> friendlyHexes;
+    std::vector <HexagonField> enemyHexes;
     std::cout << "Turn of player:" << playerOnTurn << std::endl;
-
+    if(playerOnTurn == 0)
+    {
+        friendlyHexes = trenchHexes;
+        enemyHexes = mobileHexes;
+    }
+    else
+    {
+        friendlyHexes = mobileHexes;
+        enemyHexes = trenchHexes;
+    }
     // Step 1: Securing the front =====================
-    // Get list of friendly territorries
-
     // Get list of all the enemy territorries that border any one of them - this gives back the frontline
 
     // Compute needed soldiers for each of held territories (at least 30% of enemy units harboring this territory)
@@ -77,13 +117,17 @@ unsigned int aiStep(unsigned int interval, void * param)
     Window* window = static_cast<Window*>(param);
     if(!window->change)
     {
-        map[0]->changeUnitNumbers(0, 0);
-        map[0]->changeOwner(0);
+        map[30].changeUnitNumbers(0, 0);
+        map[30].changeOwner(0);
+        //map[30]->neighbours[0]->changeUnitNumbers(0, 0);
+        //map[30]->neighbours[0]->changeOwner(0);
     }
     else
     {
-        map[0]->changeUnitNumbers(10, 10);
-        map[0]->changeOwner(1);
+        map[30].changeUnitNumbers(10, 10);
+        map[30].changeOwner(1);
+        //map[30]->neighbours[0]->changeUnitNumbers(10, 10);
+        //map[30]->neighbours[0]->changeOwner(1);
     }
 
     playerOnTurn = !playerOnTurn;
@@ -124,16 +168,27 @@ int main(int argc, char **argv)
             {
                 playerIDToAssignTo = 1;
             }
+            else
+            {
+                playerIDToAssignTo = 0;
+            }
             // Shift every second column in a row down by half a hexagon
             r % 2 == 1 ? verticalOffset = yAnchor + (q * HEX_SIZE) + colShift : verticalOffset = yAnchor + (q * HEX_SIZE);
             horizontalOffset = xAnchor + (r * (HEX_SIZE * 0.75));
-            HexagonField* newHexagonField = new HexagonField(q, r, -q-r, HEX_SIZE, horizontalOffset, verticalOffset, playerIDToAssignTo, trenchHexagonPath, mobileHexagonPath, fontPath);
+            HexagonField newHexagonField(q, r, -q-r, HEX_SIZE, horizontalOffset, verticalOffset, playerIDToAssignTo, trenchHexagonPath, mobileHexagonPath, fontPath);
+            if(playerIDToAssignTo == 0)
+            {
+                trenchHexes.push_back(newHexagonField);
+            }
+            else
+            {
+                mobileHexes.push_back(newHexagonField);
+            }
             map.push_back(newHexagonField);
         }
     }
 
-
-
+    initHexagonNeighbours();
     // Gets rid of
     redrawGUI(&window);
     SDL_TimerID aiStepTimer = SDL_AddTimer(1000, aiStep, &window);
@@ -143,10 +198,6 @@ int main(int argc, char **argv)
     }
 
     SDL_RemoveTimer(aiStepTimer);
-    for(HexagonField* hexagonField : map)
-    {
-        delete(hexagonField);
-    }
 
     return 0;
 }

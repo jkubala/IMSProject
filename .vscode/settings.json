@@ -45,6 +45,8 @@
         "condition_variable": "cpp",
         "future": "cpp",
         "mutex": "cpp",
-        "unordered_map": "cpp"
+        "unordered_map": "cpp",
+        "deque": "cpp",
+        "functional": "cpp"
     }
 }

@@ -12,11 +12,6 @@ HexagonField::HexagonField(int q, int r, int s): q(q), r(r), s(s)
     assert (q + r + s == 0);
 }
 
-HexagonField::~HexagonField()
-{
-    delete(gui);
-}
-
 HexagonField HexagonField::hexagonAdd(HexagonField a, HexagonField b)
 {
     return HexagonField(a.q + b.q, a.r + b.r, a.s + b.s);

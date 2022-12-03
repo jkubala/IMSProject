@@ -7,10 +7,9 @@
 class HexagonField
 {
 public:
-    const int q, r, s;
+    int q, r, s;
     HexagonField(int q, int r, int s);
     HexagonField(int q, int r, int s, int size, int horizontalOffset, int verticalOffset, int lastFieldOfTrenchPlayer, std::string trenchImagePath, std::string mobileImagePath, std::string fontPath);
-    ~HexagonField();
     HexagonField hexagonAdd(HexagonField a, HexagonField b);
     HexagonField hexagonSubtract(HexagonField a, HexagonField b);
     HexagonField hexagonMultiply(HexagonField a, int k);
@@ -29,6 +28,8 @@ public:
     {
         return !(*this == comparedHex);
     }
+
+    HexagonField* neighbours[5];
 
     int getOwner();
     void changeOwner(int idOfPlayer);
