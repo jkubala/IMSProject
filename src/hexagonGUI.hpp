@@ -20,7 +20,8 @@ private:
     int size, x, y;
     mutable int textXOffset, textYOffset;
     SDL_Texture* hexagonTexture = nullptr;
-    std::string stringWithText = "T: 0\nP: 0";
+    std::string stringTanks = "T: 0";
+    std::string stringFootmen = "P: 0";
     std::string mobileImagePath;
     std::string trenchImagePath;
 

@@ -50,34 +50,79 @@ void getFieldFromMapAndAssignAsNeighbour(HexagonField* hexagonToSearchFor, Hexag
     if(it != map.end())
     {
         hexagonToAssignTo->neighbours[neighbourToInsertInto] = &map[it - map.begin()];
+        std::cout << hexagonToAssignTo->neighbours[neighbourToInsertInto]->q << std::endl;
+        std::cout << hexagonToAssignTo->neighbours[neighbourToInsertInto]->r << std::endl;
+        std::cout << hexagonToAssignTo->neighbours[neighbourToInsertInto]->s << std::endl;
+        std::cout << hexagonToAssignTo->q << std::endl;
+        std::cout << hexagonToAssignTo->r << std::endl;
+        std::cout << hexagonToAssignTo->s << std::endl;
+        // std::cout << map[it - map.begin()].q << std::endl;
+        // std::cout << map[it - map.begin()].r << std::endl;
+        // std::cout << map[it - map.begin()].s << std::endl;
+        
     }
 }
 
 void initHexagonNeighbours()
 {
-    for(HexagonField hexagon : map)
+    for(int i = 0; i < map.size(); i++)
     {
-        HexagonField hexagonNeighbourTop(hexagon.q, hexagon.r - 1, hexagon.s + 1);
-        HexagonField hexagonNeighbourRightTop(hexagon.q + 1, hexagon.r - 1, hexagon.s);
-        HexagonField hexagonNeighbourRightDown(hexagon.q + 1, hexagon.r, hexagon.s - 1);
-        HexagonField hexagonNeighbourDown(hexagon.q, hexagon.r + 1, hexagon.s - 1);
-        HexagonField hexagonNeighbourLeftDown(hexagon.q - 1, hexagon.r + 1, hexagon.s);
-        HexagonField hexagonNeighbourLeftTop(hexagon.q - 1, hexagon.r, hexagon.s + 1);
+        map[i].changeUnitNumbers(map[i].q, map[i].r);
+        // HexagonField hexagonNeighbourTop(map[i].q, map[i].r - 1, map[i].s + 1);
+        // HexagonField hexagonNeighbourRightTop(hexagon.q + 1, hexagon.r - 1, hexagon.s);
+        // HexagonField hexagonNeighbourRightDown(hexagon.q + 1, hexagon.r, hexagon.s - 1);
+        // HexagonField hexagonNeighbourDown(hexagon.q, hexagon.r + 1, hexagon.s - 1);
+        // HexagonField hexagonNeighbourLeftDown(hexagon.q - 1, hexagon.r + 1, hexagon.s);
+        // HexagonField hexagonNeighbourLeftTop(hexagon.q - 1, hexagon.r, hexagon.s + 1);
 
-        getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourTop, &hexagon, 0);
-        getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourRightTop, &hexagon, 1);
-        getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourRightDown, &hexagon, 2);
-        getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourDown, &hexagon, 3);
-        getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourLeftDown, &hexagon, 4);
-        getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourLeftTop, &hexagon, 5);
+        // std::vector<HexagonField>::iterator it;
+        // it = std::find(map.begin(), map.end(), hexagonNeighbourTop);
+        // if(it != map.end())
+        // {
+        //     map[i].neighbours[0] = &map[it - map.begin()];
+        //     if(it - map.begin() == 30)
+        //     {
+        //         std::cout << map[i].neighbours[0]->q << std::endl;
+        //         std::cout << map[i].neighbours[0]->r << std::endl;
+        //         std::cout << map[i].neighbours[0]->s << std::endl;
+        //         std::cout << map[it - map.begin()].q << std::endl;
+        //         std::cout << map[it - map.begin()].r << std::endl;
+        //         std::cout << map[it - map.begin()].s << std::endl;
+        //     }
+        // }
+
+        //getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourTop, &hexagon, 0);
+        // if(hexagon.neighbours[0] != nullptr)
+        // {
+        //     std:: cout << "start" << std::endl;
+        //     std::cout << hexagon.q << " " << hexagon.r << " " << hexagon.s << std::endl;
+        //     std::cout << hexagon.neighbours[0]->q << std::endl;
+        //     std::cout << hexagon.neighbours[0]->r << std::endl;
+        //     std::cout << hexagon.neighbours[0]->s << std::endl;
+        //     std:: cout << "end" << std::endl;
+        // }
+        // getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourRightTop, &hexagon, 1);
+        // getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourRightDown, &hexagon, 2);
+        // getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourDown, &hexagon, 3);
+        // getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourLeftDown, &hexagon, 4);
+        // getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourLeftTop, &hexagon, 5);
     }
+    //HexagonField hexagonNeighbourTop(map[30].q, map[30].r - 1, map[30].s + 1);
+    std::cout << "FUNNY\n" << map[30].q << std::endl;
+    std::cout << map[30].r << std::endl;
+    std::cout << map[30].s << "\nFUNNY END\n" << std::endl;
+    HexagonField hexagonNeighbourTop(map[30].q + 1, map[30].r,map[30].s - 1);
+    std::cout << "FUNNY\n" << hexagonNeighbourTop.q << std::endl;
+    std::cout << hexagonNeighbourTop.r << std::endl;
+    std::cout << hexagonNeighbourTop.s << "\nFUNNY END\n" << std::endl;
+    getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourTop, &map[30], 1);
 }
 
 unsigned int aiStep(unsigned int interval, void * param)
 {
     std::vector <HexagonField> friendlyHexes;
     std::vector <HexagonField> enemyHexes;
-    std::cout << "Turn of player:" << playerOnTurn << std::endl;
+    //std::cout << "Turn of player:" << playerOnTurn << std::endl;
     if(playerOnTurn == 0)
     {
         friendlyHexes = trenchHexes;
@@ -117,18 +162,22 @@ unsigned int aiStep(unsigned int interval, void * param)
     Window* window = static_cast<Window*>(param);
     if(!window->change)
     {
-        map[30].changeUnitNumbers(0, 0);
+        //map[30].changeUnitNumbers(0, 0);
         map[30].changeOwner(0);
-        //map[30]->neighbours[0]->changeUnitNumbers(0, 0);
-        //map[30]->neighbours[0]->changeOwner(0);
+        //map[30].neighbours[1]->changeUnitNumbers(0, 0);
+        //map[30].neighbours[1]->changeOwner(0);
     }
     else
     {
-        map[30].changeUnitNumbers(10, 10);
+        //map[30].changeUnitNumbers(10, 10);
         map[30].changeOwner(1);
-        //map[30]->neighbours[0]->changeUnitNumbers(10, 10);
-        //map[30]->neighbours[0]->changeOwner(1);
+        //map[30].neighbours[1]->changeUnitNumbers(10, 10);
+        //map[30].neighbours[1]->changeOwner(1);
     }
+
+    std::cout << map[30].q << "THE FUNNIEST" << std::endl;
+    std::cout << map[30].r << "THE FUNNIEST" << std::endl;
+    std::cout << map[30].s << "THE FUNNIEST" << std::endl;
 
     playerOnTurn = !playerOnTurn;
     redrawGUI(window);
@@ -156,14 +205,18 @@ int main(int argc, char **argv)
     const std::string fontPath =  localFolderPath + "/src/resources/arial.ttf";
     int horizontalOffset = xAnchor;
     int verticalOffset = yAnchor;
-    int colShift = HEX_SIZE * 0.5f;
+    int colShift = HEX_SIZE * 0.5;
     int lastRowOfTrenchPlayer = N_OF_ROWS / 2;
     int playerIDToAssignTo = 0;
-    for (int q = 0; q < N_OF_ROWS; q++)
-    {
-        verticalOffset = yAnchor + (HEX_SIZE * q);
-        for (int r = 0; r < N_OF_COLS; r++)
+    for (int q = 0; q < N_OF_COLS; q++)
+    {   
+        horizontalOffset = xAnchor + (HEX_SIZE * 0.75 * q);
+        
+        int colshift = q % 2 == 0 ? 0 : HEX_SIZE * 0.5; 
+        int qOffset = floor(q/2.0);
+        for (int r = 0 - qOffset,  rGridPos = 0; r < N_OF_ROWS - qOffset; r++, rGridPos++)
         {
+            
             if((q+1) > lastRowOfTrenchPlayer)
             {
                 playerIDToAssignTo = 1;
@@ -172,9 +225,7 @@ int main(int argc, char **argv)
             {
                 playerIDToAssignTo = 0;
             }
-            // Shift every second column in a row down by half a hexagon
-            r % 2 == 1 ? verticalOffset = yAnchor + (q * HEX_SIZE) + colShift : verticalOffset = yAnchor + (q * HEX_SIZE);
-            horizontalOffset = xAnchor + (r * (HEX_SIZE * 0.75));
+            verticalOffset = yAnchor + (HEX_SIZE * rGridPos) + colshift;
             HexagonField newHexagonField(q, r, -q-r, HEX_SIZE, horizontalOffset, verticalOffset, playerIDToAssignTo, trenchHexagonPath, mobileHexagonPath, fontPath);
             if(playerIDToAssignTo == 0)
             {
@@ -191,7 +242,7 @@ int main(int argc, char **argv)
     initHexagonNeighbours();
     // Gets rid of
     redrawGUI(&window);
-    SDL_TimerID aiStepTimer = SDL_AddTimer(1000, aiStep, &window);
+    SDL_TimerID aiStepTimer = SDL_AddTimer(500, aiStep, &window);
     while(!window.isClosed())
     {
         pollEvents(window);

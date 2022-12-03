@@ -33,7 +33,7 @@ public:
 
     int getOwner();
     void changeOwner(int idOfPlayer);
-    void changeUnitNumbers(int footmen, int tanks);
+    void changeUnitNumbers(int tanks, int footmen);
     int getNOfTanks();
     int getNOfFootmen();
     void redrawGUI();

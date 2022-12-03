@@ -7,8 +7,9 @@ HexagonGUI::HexagonGUI(int size, int x, int y, int lastFieldOfTrenchPlayer, cons
     trenchImagePath = aTrenchImagePath;
     mobileImagePath = aMobileImagePath;
     updateImageToPlayer(lastFieldOfTrenchPlayer);
-    int fontSize = size / getLongerLine(stringWithText).length();
-    textElement = new Text(Window::renderer, fontPath, fontSize, stringWithText);
+    std::string longerLine = stringTanks > stringFootmen ? stringTanks : stringFootmen;
+    int fontSize = size /longerLine.length();
+    textElement = new Text(Window::renderer, fontPath, fontSize, stringTanks + "\n" + stringFootmen);
 }
 
 void HexagonGUI::updateImageToPlayer(int idOfPlayer)
@@ -44,27 +45,15 @@ HexagonGUI::~HexagonGUI()
     SDL_DestroyTexture(hexagonTexture);
 }
 
-std::string HexagonGUI::getLongerLine (std::string& stringToAnalyze)
-{
-    std::stringstream ss(stringToAnalyze);
-    std::string currentString;
-    std::string longestString = "";
-    while (std::getline(ss, currentString, '\n')) {
-        if(strlen(currentString.c_str()) > strlen(longestString.c_str()))
-        {
-            longestString = currentString;
-        }
-    }
-    return longestString;
-}
-
 void HexagonGUI::updateTextString(int nOfTanks, int nOfSoldiers)
 {
-    std::string newString = std::string("T: ") + std::to_string(nOfTanks) + std::string("\nP: ") + std::to_string(nOfSoldiers);
-    if(stringWithText != newString)
+    std::string newStringTanks = std::string("T: ") + std::to_string(nOfTanks);
+    std::string newStringFootmen = std::string("P: ") + std::to_string(nOfSoldiers);
+    if(stringTanks != newStringTanks || stringFootmen != newStringFootmen)
     {
-        stringWithText = newString;
-        textElement->UpdateText(stringWithText);
+        stringTanks = newStringTanks;
+        stringFootmen = newStringFootmen;
+        textElement->UpdateText(stringTanks + "\n" + stringFootmen);
     }
 }
 
@@ -72,7 +61,8 @@ void HexagonGUI::draw()
 {
     int stringWidth = 0;
     int stringHeight = 0;
-    TTF_SizeText(textElement->font, getLongerLine(stringWithText).c_str(), &stringWidth, &stringHeight);
+    std::string longerLine = stringTanks > stringFootmen ? stringTanks : stringFootmen;
+    TTF_SizeText(textElement->font, longerLine.c_str(), &stringWidth, &stringHeight);
     textXOffset = x + ((size  - stringWidth) / 2);
     // Multiply by two to account for the two strings being above each other
     textYOffset = y + ((size - (stringHeight * 2)) / 2);
