@@ -13,7 +13,7 @@
 #define WINDOW_SIZE_Y 1080
 #define HEX_SIZE 96
 #define N_OF_ROWS 10
-#define N_OF_COLS 15
+#define N_OF_COLS 26
 
 std::string trenchHexagonPath;
 std::string mobileHexagonPath;
@@ -189,8 +189,8 @@ int main(int argc, char **argv)
 {
     // Prepare window, anchors so that the map is centered, get png resources and generate hexGrid
     Window window(WINDOW_SIZE_X, WINDOW_SIZE_Y, "World map");
-    int xAnchor = (WINDOW_SIZE_X - (HEX_SIZE * 0.75 * N_OF_COLS)) / 2;
-    int yAnchor = (WINDOW_SIZE_Y - ((N_OF_ROWS + 0.5) * HEX_SIZE)) / 2;
+    int xAnchor = (WINDOW_SIZE_X - (HEX_SIZE * 0.75f * (N_OF_COLS + 1.0f/3.0f))) / 2;
+    int yAnchor = (WINDOW_SIZE_Y - ((N_OF_ROWS + 0.5f) * HEX_SIZE)) / 2;
     
     char cwd[PATH_MAX];
     if (getcwd(cwd, sizeof(cwd)) == NULL)
@@ -206,7 +206,7 @@ int main(int argc, char **argv)
     int horizontalOffset = xAnchor;
     int verticalOffset = yAnchor;
     int colShift = HEX_SIZE * 0.5;
-    int lastRowOfTrenchPlayer = N_OF_ROWS / 2;
+    int lastColOfTrenchPlayer = N_OF_COLS / 2;
     int playerIDToAssignTo = 0;
     for (int q = 0; q < N_OF_COLS; q++)
     {   
@@ -217,7 +217,7 @@ int main(int argc, char **argv)
         for (int r = 0 - qOffset,  rGridPos = 0; r < N_OF_ROWS - qOffset; r++, rGridPos++)
         {
             
-            if((q+1) > lastRowOfTrenchPlayer)
+            if((q+1) > lastColOfTrenchPlayer)
             {
                 playerIDToAssignTo = 1;
             }
