@@ -10,6 +10,7 @@ public:
     const int q, r, s;
     HexagonField(int q, int r, int s);
     HexagonField(int q, int r, int s, int size, int horizontalOffset, int verticalOffset, std::string imagePath, std::string fontPath);
+    ~HexagonField();
     HexagonField hexagonAdd(HexagonField a, HexagonField b);
     HexagonField hexagonSubtract(HexagonField a, HexagonField b);
     HexagonField hexagonMultiply(HexagonField a, int k);

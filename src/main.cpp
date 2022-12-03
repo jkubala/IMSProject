@@ -19,7 +19,6 @@ std::string enemyHexagonPath;
 std::vector <HexagonField*> map;
 bool playerOnTurn = 0;
 
-
 void pollEvents(Window& window) {
     SDL_Event event;
 
@@ -82,7 +81,6 @@ int main(int argc, char **argv)
     int horizontalOffset = xAnchor;
     int verticalOffset = yAnchor;
     int colShift = HEX_SIZE * 0.5f;
-
     for (int q = 0; q < N_OF_ROWS; q++)
     {
         verticalOffset = yAnchor + (HEX_SIZE * q);
@@ -95,7 +93,8 @@ int main(int argc, char **argv)
             map.push_back(newHexagonField);
         }
     }
-
+    // Gets rid of
+    redrawGUI(&window);
     SDL_TimerID aiStepTimer = SDL_AddTimer(1000, aiStep, &window);
     while(!window.isClosed())
     {

@@ -1,4 +1,5 @@
 #include "hexagonField.hpp"
+#include <iostream>
 
 HexagonField::HexagonField(int q, int r, int s, int size, int horizontalOffset, int verticalOffset, std::string imagePath, std::string fontPath): q(q), r(r), s(s)
 {
@@ -11,10 +12,10 @@ HexagonField::HexagonField(int q, int r, int s): q(q), r(r), s(s)
     assert (q + r + s == 0);
 }
 
-const std::vector<HexagonField> HexagonField::hexagonDirections = {
-  HexagonField(1, 0, -1), HexagonField(1, -1, 0), HexagonField(0, -1, 1),
-  HexagonField(-1, 0, 1), HexagonField(-1, 1, 0), HexagonField(0, 1, -1)
-};
+HexagonField::~HexagonField()
+{
+    std::cout << "Sus" << std::endl;
+}
 
 HexagonField HexagonField::hexagonAdd(HexagonField a, HexagonField b)
 {
@@ -37,13 +38,4 @@ int HexagonField::hexagonLength(HexagonField hex) {
 
 int HexagonField::hexagonDistance(HexagonField a, HexagonField b) {
     return hexagonLength( hexagonSubtract(a, b));
-}
-
-HexagonField HexagonField::hexagonDirection(int direction /* 0 to 5 */) {
-    assert (0 <= direction && direction < 6);
-    return hexagonDirections[direction];
-}
-
-HexagonField HexagonField::hexagonNeighbor(HexagonField hex, int direction) {
-    return hexagonAdd(hex, hexagonDirection(direction));
 }

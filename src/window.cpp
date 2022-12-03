@@ -6,6 +6,9 @@ SDL_Renderer* Window::renderer = nullptr;
 Window::Window(int width, int height, const std::string &title) : width(width), height(height), title(title)
 {
     closed = !init();
+    // Needs to clear itself twice, otherwise the first frame will be distorted
+    clear();
+    clear();
 }
 
 Window::~Window()

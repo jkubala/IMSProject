@@ -6,44 +6,10 @@
 
 #IncludeRegexTransform: 
 
-/home/jankubala/Downloads/IMSProject/src/hexagonField.hpp
-assert.h
--
-vector
--
-hexagonGUI.hpp
-/home/jankubala/Downloads/IMSProject/src/hexagonGUI.hpp
-
-/home/jankubala/Downloads/IMSProject/src/hexagonGUI.hpp
+/home/jankubala/Downloads/IMSProject/src/window.cpp
 window.hpp
 /home/jankubala/Downloads/IMSProject/src/window.hpp
-text.hpp
-/home/jankubala/Downloads/IMSProject/src/text.hpp
-SDL2/SDL_ttf.h
--
-
-/home/jankubala/Downloads/IMSProject/src/main.cpp
 iostream
--
-unistd.h
--
-libgen.h
--
-vector
--
-chrono
--
-thread
--
-hexagonField.hpp
-/home/jankubala/Downloads/IMSProject/src/hexagonField.hpp
-
-/home/jankubala/Downloads/IMSProject/src/text.hpp
-SDL2/SDL_ttf.h
--
-SDL2/SDL.h
--
-string
 -
 
 /home/jankubala/Downloads/IMSProject/src/window.hpp
