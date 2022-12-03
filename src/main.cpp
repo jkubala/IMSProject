@@ -37,7 +37,7 @@ void redrawGUI(Window* window)
 {
     for(HexagonField* hexagonField : map)
     {
-        hexagonField->gui->draw();
+        hexagonField->redrawGUI();
     }
     window->clear();
 }
@@ -77,12 +77,12 @@ unsigned int aiStep(unsigned int interval, void * param)
     Window* window = static_cast<Window*>(param);
     if(!window->change)
     {
-        map[0]->gui->updateTextString(0, 0);
+        map[0]->changeUnitNumbers(0, 0);
         map[0]->changeOwner(0);
     }
     else
     {
-        map[0]->gui->updateTextString(10, 10);
+        map[0]->changeUnitNumbers(10, 10);
         map[0]->changeOwner(1);
     }
 

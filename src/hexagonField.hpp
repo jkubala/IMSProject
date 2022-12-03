@@ -30,11 +30,16 @@ public:
         return !(*this == comparedHex);
     }
 
+    int getOwner();
     void changeOwner(int idOfPlayer);
-
+    void changeUnitNumbers(int footmen, int tanks);
+    int getNOfTanks();
+    int getNOfFootmen();
+    void redrawGUI();
+private:
     HexagonGUI* gui = nullptr;
+    int idOfPlayerControlling = 0;
     int nOfTanksPresent = 0;
     int nOfFootmenPresent = 0;
-    int idOfPlayerControlling = 0;
 };
 #endif

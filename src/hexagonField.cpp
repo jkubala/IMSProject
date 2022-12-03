@@ -28,6 +28,33 @@ void HexagonField::changeOwner(int idOfPlayer)
     gui->updateImageToPlayer(idOfPlayerControlling);
 }
 
+int HexagonField::getOwner()
+{
+    return idOfPlayerControlling;
+}
+
+void HexagonField::changeUnitNumbers(int footmen, int tanks)
+{
+    nOfFootmenPresent = footmen;
+    nOfTanksPresent = tanks;
+    gui->updateTextString(nOfTanksPresent, nOfFootmenPresent);
+}
+
+int HexagonField::getNOfFootmen()
+{
+    return nOfFootmenPresent;
+}
+
+int HexagonField::getNOfTanks()
+{
+    return nOfTanksPresent;
+}
+
+void HexagonField::redrawGUI()
+{
+    gui->draw();
+}
+
 HexagonField HexagonField::hexagonSubtract(HexagonField a, HexagonField b)
 {
     return HexagonField(a.q - b.q, a.r - b.r, a.s - b.s);
