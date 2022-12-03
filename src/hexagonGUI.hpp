@@ -24,6 +24,7 @@ private:
 
 public:
     void updateTextString(int nOfTanks, int nOfSoldiers);
+    void updateImage(const std::string& imagePath);
     Text* textElement = nullptr;
 };
 

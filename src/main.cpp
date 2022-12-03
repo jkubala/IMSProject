@@ -13,6 +13,13 @@
 #define HEX_SIZE 96
 #define N_OF_ROWS 10
 #define N_OF_COLS 15
+
+std::string friendlyHexagonPath;
+std::string enemyHexagonPath;
+std::vector <HexagonField*> map;
+bool playerOnTurn = 0;
+
+
 void pollEvents(Window& window) {
     SDL_Event event;
 
@@ -24,10 +31,33 @@ void pollEvents(Window& window) {
     }
 }
 
+void redrawGUI(Window* window)
+{
+    for(HexagonField* hexagonField : map)
+    {
+        hexagonField->gui->draw();
+    }
+    window->clear();
+}
+
 unsigned int aiStep(unsigned int interval, void * param)
 {
-    std::vector<HexagonField*>* map = static_cast<std::vector<HexagonField*>*>(param);
-    (*map)[0]->gui->updateTextString((*map)[0]->q, (*map)[0]->r);
+    std::cout << "Turn of player:" << playerOnTurn << std::endl;
+    Window* window = static_cast<Window*>(param);
+    if(window->change)
+    {
+        map[0]->gui->updateTextString(0, 0);
+        map[0]->gui->updateImage(enemyHexagonPath);
+    }
+    else
+    {
+        map[0]->gui->updateTextString(10, 10);
+        map[0]->gui->updateImage(friendlyHexagonPath);
+    }
+
+    playerOnTurn = !playerOnTurn;
+    redrawGUI(window);
+    
     return interval;
 }
 
@@ -44,16 +74,15 @@ int main(int argc, char **argv)
        std::cerr << "Unable to get current folder!\n";
        return 1;
     }
+    std::string localFolderPath = std::string(dirname(cwd));
 
-    const std::string friendlyHexagonPath = std::string(dirname(cwd)) + "/src/resources/hexagonFriendly.png";
-    const std::string enemyHexagonPath = std::string(dirname(cwd)) + "/src/resources/hexagonEnemy.png";
-    const std::string fontPath = "/home/jankubala/Downloads/IMSProject/src/resources/arial.ttf";
-
+    friendlyHexagonPath = localFolderPath + "/src/resources/hexagonFriendly.png";
+    enemyHexagonPath = localFolderPath + "/src/resources/hexagonEnemy.png";
+    const std::string fontPath =  localFolderPath + "/src/resources/arial.ttf";
     int horizontalOffset = xAnchor;
     int verticalOffset = yAnchor;
     int colShift = HEX_SIZE * 0.5f;
 
-    std::vector <HexagonField*> map;
     for (int q = 0; q < N_OF_ROWS; q++)
     {
         verticalOffset = yAnchor + (HEX_SIZE * q);
@@ -67,25 +96,12 @@ int main(int argc, char **argv)
         }
     }
 
-
-    SDL_TimerID aiStepTimer = SDL_AddTimer(3000, aiStep, &map);
+    SDL_TimerID aiStepTimer = SDL_AddTimer(1000, aiStep, &window);
     while(!window.isClosed())
     {
-        for(HexagonField* hexagonField : map)
-        {
-            if(hexagonField->gui != nullptr)
-            {
-                hexagonField->gui->draw();
-            }
-            else
-            {
-                std::cerr << "hexagonField with nullptr as gui detected!";
-                return 1;
-            }
-        }
-        window.clear();
         pollEvents(window);
     }
+
     SDL_RemoveTimer(aiStepTimer);
     for(HexagonField* hexagonField : map)
     {

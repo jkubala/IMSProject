@@ -33,7 +33,7 @@ bool Window::init()
 
     if(TTF_Init() == -1)
     {
-                std::cerr << "Failed to initialize SDL_ttf!\n";
+        std::cerr << "Failed to initialize SDL_ttf!\n";
         return false;
     }
 
@@ -67,7 +67,7 @@ void Window::pollEvents(SDL_Event &event)
         closed = true;
         break;
     case SDL_KEYDOWN:
-
+        change = !change;
         break;
     default:
         break;

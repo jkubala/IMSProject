@@ -4,6 +4,17 @@
 
 HexagonGUI::HexagonGUI(int size, int x, int y, const std::string& imagePath, const std::string& fontPath) : size(size), x(x), y(y)
 {
+    updateImage(imagePath);
+    int fontSize = size / getLongerLine(stringWithText).length();
+    textElement = new Text(Window::renderer, fontPath, fontSize, stringWithText);
+}
+
+void HexagonGUI::updateImage(const std::string& imagePath)
+{
+    if(hexagonTexture != nullptr)
+    {
+        SDL_DestroyTexture(hexagonTexture);
+    }
     SDL_Surface* surface = IMG_Load(imagePath.c_str());
     if(!surface)
     {
@@ -16,9 +27,6 @@ HexagonGUI::HexagonGUI(int size, int x, int y, const std::string& imagePath, con
         std::cerr << "Failed to create texture!\n";
     }
     SDL_FreeSurface(surface);
-
-    int fontSize = size / getLongerLine(stringWithText).length();
-    textElement = new Text(Window::renderer, fontPath, fontSize, stringWithText);
 }
 
 HexagonGUI::~HexagonGUI()
@@ -46,7 +54,6 @@ void HexagonGUI::updateTextString(int nOfTanks, int nOfSoldiers)
     if(stringWithText != newString)
     {
         stringWithText = newString;
-        std::cout << "BRUUUH" << newString;
         textElement->UpdateText(stringWithText);
     }
 }
@@ -61,7 +68,7 @@ void HexagonGUI::draw()
     textYOffset = y + ((size - (stringHeight * 2)) / 2);
     SDL_Rect rect = { x, y, size, size};
 
-    if(hexagonTexture)
+    if(hexagonTexture != nullptr)
     {
         SDL_RenderCopy(Window::renderer, hexagonTexture, nullptr, &rect);
         textElement->display(Window::renderer, textXOffset, textYOffset);

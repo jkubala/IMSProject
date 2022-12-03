@@ -28,5 +28,6 @@ private:
 
 public:
     static SDL_Renderer *renderer;
+    bool change = false;
 };
 #endif
