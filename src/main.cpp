@@ -55,11 +55,17 @@ void getFieldFromMapAndAssignAsNeighbour(HexagonField& hexagonToSearchFor, Hexag
         std::cout << map[it - map.begin()].r << std::endl;
         std::cout << map[it - map.begin()].s << std::endl;
     }
+    else
+    {
+        std::cerr << "ERROR: COULD NOT FIND NEIGHBOUR" << std::endl;
+        hexagonToInsertInto.neighbours[neighbourToInsertInto] = nullptr;
+
+    }
 }
 
 void initHexagonNeighbours()
 {
-    for(HexagonField hexagon: map)
+    for(HexagonField &hexagon: map)
     {
         hexagon.changeUnitNumbers(hexagon.q, hexagon.r);
         HexagonField hexagonNeighbourTop(hexagon.q, hexagon.r - 1, hexagon.s + 1);
@@ -133,7 +139,15 @@ unsigned int aiStep(unsigned int interval, void * param)
         //map[21].changeUnitNumbers(10, 10);
         map[21].changeOwner(1);
         //map[21].neighbours[1]->changeUnitNumbers(10, 10);
-        map[21].neighbours[0]->changeOwner(1);
+        if (map[21].neighbours[0])
+        {
+            map[21].neighbours[0]->changeOwner(1);
+        }
+        else
+        {
+            std::cout << "neighbour not found" << std::endl;
+        }
+        
     }
 
     playerOnTurn = !playerOnTurn;
