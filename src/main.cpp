@@ -43,23 +43,22 @@ void redrawGUI(Window* window)
     window->clear();
 }
 
-void getFieldFromMapAndAssignAsNeighbour(HexagonField* hexagonToSearchFor, HexagonField* hexagonToAssignTo, int neighbourToInsertInto)
+void getFieldFromMapAndAssignAsNeighbour(HexagonField& hexagonToSearchFor, int hexagonToInsertToIndex, int neighbourToInsertInto)
 {
     std::vector<HexagonField>::iterator it;
-    it = std::find(map.begin(), map.end(), *hexagonToSearchFor);
+    it = std::find(map.begin(), map.end(), hexagonToSearchFor);
     if(it != map.end())
     {
-        hexagonToAssignTo->neighbours[neighbourToInsertInto] = &map[it - map.begin()];
-        std::cout << hexagonToAssignTo->neighbours[neighbourToInsertInto]->q << std::endl;
-        std::cout << hexagonToAssignTo->neighbours[neighbourToInsertInto]->r << std::endl;
-        std::cout << hexagonToAssignTo->neighbours[neighbourToInsertInto]->s << std::endl;
-        std::cout << hexagonToAssignTo->q << std::endl;
-        std::cout << hexagonToAssignTo->r << std::endl;
-        std::cout << hexagonToAssignTo->s << std::endl;
+        map[hexagonToInsertToIndex].neighbours[neighbourToInsertInto] = &map[it - map.begin()];
+
+        // std::cout << "INSERTING THIS" << std::endl;
         // std::cout << map[it - map.begin()].q << std::endl;
         // std::cout << map[it - map.begin()].r << std::endl;
         // std::cout << map[it - map.begin()].s << std::endl;
-        
+        // std::cout << "AND IN MAP THERE IS THIS" << std::endl;
+        // std::cout << map[hexagonToInsertToIndex].neighbours[neighbourToInsertInto]->q << std::endl;
+        // std::cout << map[hexagonToInsertToIndex].neighbours[neighbourToInsertInto]->r << std::endl;
+        // std::cout << map[hexagonToInsertToIndex].neighbours[neighbourToInsertInto]->s << std::endl;
     }
 }
 
@@ -68,54 +67,20 @@ void initHexagonNeighbours()
     for(int i = 0; i < map.size(); i++)
     {
         map[i].changeUnitNumbers(map[i].q, map[i].r);
-        // HexagonField hexagonNeighbourTop(map[i].q, map[i].r - 1, map[i].s + 1);
-        // HexagonField hexagonNeighbourRightTop(hexagon.q + 1, hexagon.r - 1, hexagon.s);
-        // HexagonField hexagonNeighbourRightDown(hexagon.q + 1, hexagon.r, hexagon.s - 1);
-        // HexagonField hexagonNeighbourDown(hexagon.q, hexagon.r + 1, hexagon.s - 1);
-        // HexagonField hexagonNeighbourLeftDown(hexagon.q - 1, hexagon.r + 1, hexagon.s);
-        // HexagonField hexagonNeighbourLeftTop(hexagon.q - 1, hexagon.r, hexagon.s + 1);
+        HexagonField hexagonNeighbourTop(map[i].q, map[i].r - 1, map[i].s + 1);
+        HexagonField hexagonNeighbourRightTop(map[i].q + 1, map[i].r - 1, map[i].s);
+        HexagonField hexagonNeighbourRightDown(map[i].q + 1, map[i].r, map[i].s - 1);
+        HexagonField hexagonNeighbourDown(map[i].q, map[i].r + 1, map[i].s - 1);
+        HexagonField hexagonNeighbourLeftDown(map[i].q - 1, map[i].r + 1, map[i].s);
+        HexagonField hexagonNeighbourLeftTop(map[i].q - 1, map[i].r, map[i].s + 1);
 
-        // std::vector<HexagonField>::iterator it;
-        // it = std::find(map.begin(), map.end(), hexagonNeighbourTop);
-        // if(it != map.end())
-        // {
-        //     map[i].neighbours[0] = &map[it - map.begin()];
-        //     if(it - map.begin() == 30)
-        //     {
-        //         std::cout << map[i].neighbours[0]->q << std::endl;
-        //         std::cout << map[i].neighbours[0]->r << std::endl;
-        //         std::cout << map[i].neighbours[0]->s << std::endl;
-        //         std::cout << map[it - map.begin()].q << std::endl;
-        //         std::cout << map[it - map.begin()].r << std::endl;
-        //         std::cout << map[it - map.begin()].s << std::endl;
-        //     }
-        // }
-
-        //getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourTop, &hexagon, 0);
-        // if(hexagon.neighbours[0] != nullptr)
-        // {
-        //     std:: cout << "start" << std::endl;
-        //     std::cout << hexagon.q << " " << hexagon.r << " " << hexagon.s << std::endl;
-        //     std::cout << hexagon.neighbours[0]->q << std::endl;
-        //     std::cout << hexagon.neighbours[0]->r << std::endl;
-        //     std::cout << hexagon.neighbours[0]->s << std::endl;
-        //     std:: cout << "end" << std::endl;
-        // }
-        // getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourRightTop, &hexagon, 1);
-        // getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourRightDown, &hexagon, 2);
-        // getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourDown, &hexagon, 3);
-        // getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourLeftDown, &hexagon, 4);
-        // getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourLeftTop, &hexagon, 5);
+        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourTop, i, 0);
+        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourRightTop, i, 1);
+        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourRightDown, i, 2);
+        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourDown, i, 3);
+        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourLeftDown, i, 4);
+        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourLeftTop, i, 5);
     }
-    //HexagonField hexagonNeighbourTop(map[30].q, map[30].r - 1, map[30].s + 1);
-    std::cout << "FUNNY\n" << map[30].q << std::endl;
-    std::cout << map[30].r << std::endl;
-    std::cout << map[30].s << "\nFUNNY END\n" << std::endl;
-    HexagonField hexagonNeighbourTop(map[30].q + 1, map[30].r,map[30].s - 1);
-    std::cout << "FUNNY\n" << hexagonNeighbourTop.q << std::endl;
-    std::cout << hexagonNeighbourTop.r << std::endl;
-    std::cout << hexagonNeighbourTop.s << "\nFUNNY END\n" << std::endl;
-    getFieldFromMapAndAssignAsNeighbour(&hexagonNeighbourTop, &map[30], 1);
 }
 
 unsigned int aiStep(unsigned int interval, void * param)
@@ -163,21 +128,18 @@ unsigned int aiStep(unsigned int interval, void * param)
     if(!window->change)
     {
         //map[30].changeUnitNumbers(0, 0);
-        map[30].changeOwner(0);
+        //std::cout << map[35].neighbours[3]->q << std::endl;
+        map[21].changeOwner(0);
         //map[30].neighbours[1]->changeUnitNumbers(0, 0);
-        //map[30].neighbours[1]->changeOwner(0);
+        //map[21].neighbours[0]->changeOwner(0);
     }
     else
     {
         //map[30].changeUnitNumbers(10, 10);
-        map[30].changeOwner(1);
+        map[21].changeOwner(1);
         //map[30].neighbours[1]->changeUnitNumbers(10, 10);
-        //map[30].neighbours[1]->changeOwner(1);
+        //map[21].neighbours[0]->changeOwner(1);
     }
-
-    std::cout << map[30].q << "THE FUNNIEST" << std::endl;
-    std::cout << map[30].r << "THE FUNNIEST" << std::endl;
-    std::cout << map[30].s << "THE FUNNIEST" << std::endl;
 
     playerOnTurn = !playerOnTurn;
     redrawGUI(window);
@@ -241,14 +203,15 @@ int main(int argc, char **argv)
 
     initHexagonNeighbours();
     // Gets rid of
-    redrawGUI(&window);
-    SDL_TimerID aiStepTimer = SDL_AddTimer(500, aiStep, &window);
+    //SDL_TimerID aiStepTimer = SDL_AddTimer(100, aiStep, &window);
     while(!window.isClosed())
     {
+        // GUI is redrawn each step in aiStepTime, this has added for debugging purposes. REMOVE WHEN ENABLING aiStepTimer!
+        redrawGUI(&window);
         pollEvents(window);
     }
 
-    SDL_RemoveTimer(aiStepTimer);
+    //SDL_RemoveTimer(aiStepTimer);
 
     return 0;
 }
