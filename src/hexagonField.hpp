@@ -29,7 +29,7 @@ public:
         return !(*this == comparedHex);
     }
 
-    HexagonField* neighbours[5];
+    HexagonField* neighbours[6];
 
     int getOwner();
     void changeOwner(int idOfPlayer);

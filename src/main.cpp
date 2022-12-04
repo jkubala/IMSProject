@@ -43,13 +43,13 @@ void redrawGUI(Window* window)
     window->clear();
 }
 
-void getFieldFromMapAndAssignAsNeighbour(HexagonField& hexagonToSearchFor, int hexagonToInsertToIndex, int neighbourToInsertInto)
+void getFieldFromMapAndAssignAsNeighbour(HexagonField& hexagonToSearchFor, HexagonField& hexagonToInsert, int neighbourToInsertInto)
 {
     std::vector<HexagonField>::iterator it;
     it = std::find(map.begin(), map.end(), hexagonToSearchFor);
     if(it != map.end())
     {
-        map[hexagonToInsertToIndex].neighbours[neighbourToInsertInto] = &map[it - map.begin()];
+        hexagonToInsert.neighbours[neighbourToInsertInto] = &map[it - map.begin()];
 
         // std::cout << "INSERTING THIS" << std::endl;
         // std::cout << map[it - map.begin()].q << std::endl;
@@ -64,22 +64,22 @@ void getFieldFromMapAndAssignAsNeighbour(HexagonField& hexagonToSearchFor, int h
 
 void initHexagonNeighbours()
 {
-    for(int i = 0; i < map.size(); i++)
+    for(HexagonField hexagon: map)
     {
-        map[i].changeUnitNumbers(map[i].q, map[i].r);
-        HexagonField hexagonNeighbourTop(map[i].q, map[i].r - 1, map[i].s + 1);
-        HexagonField hexagonNeighbourRightTop(map[i].q + 1, map[i].r - 1, map[i].s);
-        HexagonField hexagonNeighbourRightDown(map[i].q + 1, map[i].r, map[i].s - 1);
-        HexagonField hexagonNeighbourDown(map[i].q, map[i].r + 1, map[i].s - 1);
-        HexagonField hexagonNeighbourLeftDown(map[i].q - 1, map[i].r + 1, map[i].s);
-        HexagonField hexagonNeighbourLeftTop(map[i].q - 1, map[i].r, map[i].s + 1);
+        hexagon.changeUnitNumbers(hexagon.q, hexagon.r);
+        HexagonField hexagonNeighbourTop(hexagon.q, hexagon.r - 1, hexagon.s + 1);
+        HexagonField hexagonNeighbourRightTop(hexagon.q + 1, hexagon.r - 1, hexagon.s);
+        HexagonField hexagonNeighbourRightDown(hexagon.q + 1, hexagon.r, hexagon.s - 1);
+        HexagonField hexagonNeighbourDown(hexagon.q, hexagon.r + 1, hexagon.s - 1);
+        HexagonField hexagonNeighbourLeftDown(hexagon.q - 1, hexagon.r + 1, hexagon.s);
+        HexagonField hexagonNeighbourLeftTop(hexagon.q - 1, hexagon.r, hexagon.s + 1);
 
-        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourTop, i, 0);
-        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourRightTop, i, 1);
-        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourRightDown, i, 2);
-        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourDown, i, 3);
-        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourLeftDown, i, 4);
-        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourLeftTop, i, 5);
+        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourTop, hexagon, 0);
+        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourRightTop, hexagon, 1);
+        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourRightDown, hexagon, 2);
+        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourDown, hexagon, 3);
+        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourLeftDown, hexagon, 4);
+        getFieldFromMapAndAssignAsNeighbour(hexagonNeighbourLeftTop, hexagon, 5);
     }
 }
 

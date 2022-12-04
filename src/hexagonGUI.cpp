@@ -33,7 +33,7 @@ void HexagonGUI::updateImageToPlayer(int idOfPlayer)
     }
 
     hexagonTexture = SDL_CreateTextureFromSurface(Window::renderer, surface);
-    if(!hexagonTexture)
+    if(hexagonTexture == nullptr)
     {
         std::cerr << "Failed to create texture!\n";
     }
@@ -53,7 +53,9 @@ void HexagonGUI::updateTextString(int nOfTanks, int nOfSoldiers)
     {
         stringTanks = newStringTanks;
         stringFootmen = newStringFootmen;
-        textElement->UpdateText(stringTanks + "\n" + stringFootmen);
+        if (textElement != nullptr) {
+            textElement->UpdateText(stringTanks + "\n" + stringFootmen);
+        }
     }
 }
 
@@ -61,7 +63,7 @@ void HexagonGUI::draw()
 {
     int stringWidth = 0;
     int stringHeight = 0;
-    std::string longerLine = stringTanks > stringFootmen ? stringTanks : stringFootmen;
+    std::string longerLine = stringTanks.length() > stringFootmen.length() ? stringTanks : stringFootmen;
     TTF_SizeText(textElement->font, longerLine.c_str(), &stringWidth, &stringHeight);
     textXOffset = x + ((size  - stringWidth) / 2);
     // Multiply by two to account for the two strings being above each other
