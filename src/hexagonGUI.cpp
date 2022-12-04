@@ -2,11 +2,11 @@
 #include <iostream>
 #include <sstream>
 
-HexagonGUI::HexagonGUI(int size, int x, int y, int lastFieldOfTrenchPlayer, const std::string& aTrenchImagePath, const std::string& aMobileImagePath, const std::string& fontPath) : size(size), x(x), y(y)
+HexagonGUI::HexagonGUI(int size, int x, int y, int playerIDToAssignTo, const std::string& aTrenchImagePath, const std::string& aMobileImagePath, const std::string& fontPath) : size(size), x(x), y(y)
 {
     trenchImagePath = aTrenchImagePath;
     mobileImagePath = aMobileImagePath;
-    updateImageToPlayer(lastFieldOfTrenchPlayer);
+    updateImageToPlayer(playerIDToAssignTo);
     std::string longerLine = stringTanks > stringFootmen ? stringTanks : stringFootmen;
     int fontSize = size /longerLine.length();
     textElement = new Text(Window::renderer, fontPath, fontSize, stringTanks + "\n" + stringFootmen);

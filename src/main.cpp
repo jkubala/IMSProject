@@ -50,16 +50,10 @@ void getFieldFromMapAndAssignAsNeighbour(HexagonField& hexagonToSearchFor, Hexag
     if(it != map.end())
     {
         hexagonToInsertInto.neighbours[neighbourToInsertInto] = &map[it - map.begin()];
-        std::cout << "INSERTING THIS" << std::endl;
-        std::cout << map[it - map.begin()].q << std::endl;
-        std::cout << map[it - map.begin()].r << std::endl;
-        std::cout << map[it - map.begin()].s << std::endl;
     }
     else
     {
-        std::cerr << "ERROR: COULD NOT FIND NEIGHBOUR" << std::endl;
         hexagonToInsertInto.neighbours[neighbourToInsertInto] = nullptr;
-
     }
 }
 
@@ -67,7 +61,7 @@ void initHexagonNeighbours()
 {
     for(HexagonField &hexagon: map)
     {
-        hexagon.changeUnitNumbers(hexagon.q, hexagon.r);
+        //hexagon.changeUnitNumbers(hexagon.q, hexagon.r);
         HexagonField hexagonNeighbourTop(hexagon.q, hexagon.r - 1, hexagon.s + 1);
         HexagonField hexagonNeighbourRightTop(hexagon.q + 1, hexagon.r - 1, hexagon.s);
         HexagonField hexagonNeighbourRightDown(hexagon.q + 1, hexagon.r, hexagon.s - 1);
@@ -84,11 +78,35 @@ void initHexagonNeighbours()
     }
 }
 
+void spawnUnitsOnFrontline()
+{
+    for(HexagonField& hexagon : map)
+    {
+        for (HexagonField* neighbour : hexagon.neighbours)
+        {
+            if(neighbour != nullptr && hexagon.getOwner() != neighbour->getOwner())
+            {            
+                if(hexagon.getOwner() == 0)
+                {
+                    hexagon.changeUnitNumbers(50, 50);
+                }
+                else
+                {
+                    hexagon.changeUnitNumbers(20, 20);
+                }
+            }
+        }
+    }
+}
+
 unsigned int aiStep(unsigned int interval, void * param)
 {
     std::vector <HexagonField> friendlyHexes;
     std::vector <HexagonField> enemyHexes;
+    std::vector <HexagonField*> frontline;
     std::cout << "Turn of player:" << playerOnTurn << std::endl;
+    int totalAvailableTanks = 0;
+    int totalAvailableInfantry = 0;
     if(playerOnTurn == 0)
     {
         friendlyHexes = trenchHexes;
@@ -100,10 +118,71 @@ unsigned int aiStep(unsigned int interval, void * param)
         enemyHexes = trenchHexes;
     }
     // Step 1: Securing the front =====================
-    // Get list of all the enemy territorries that border any one of them - this gives back the frontline
+    // Get list of all the friendly territorries that border any one of enemy territories - this gives back the frontline
+    for(HexagonField& hexagon : map)
+    {
+        if(hexagon.getOwner() == playerOnTurn)
+        {
+            totalAvailableTanks += hexagon.getNOfTanks();
+            totalAvailableInfantry += hexagon.getNOfFootmen();
+            bool isOnFrontLine = false;
+            for (HexagonField* neighbour : hexagon.neighbours)
+            {
+                if(neighbour != nullptr && neighbour->getOwner() != playerOnTurn)
+                {
+                    isOnFrontLine = true;
+                }
+            }
+            if(isOnFrontLine)
+            {
+                HexagonField* hexagonToAdd = &hexagon;
+                frontline.push_back(hexagonToAdd); 
+            }
+        }
+    }
 
-    // Compute needed soldiers for each of held territories (at least 30% of enemy units harboring this territory)
+    // Compute needed soldiers for each of held territories (at least 30% of enemy units in most populated neighbouring enemy tile)
     // and total number of friendly soldiers
+    bool frontlineFound = false;
+    //while(!frontlineFound)
+    {
+        int nOfTanksAvailableForThisFrontline = totalAvailableTanks;
+        int nOfInfantryAvailableForThisFrontline = totalAvailableInfantry;
+        int totalUnitsRequiredToSecureThisFrontline = 0;
+        for(HexagonField* frontlineHexagon : frontline)
+        {
+            int highestEnemyConcentration = 0;
+            for(HexagonField* neighbouringHex : frontlineHexagon->neighbours)
+            {
+                if(neighbouringHex != nullptr)
+                {
+                    if(neighbouringHex->getOwner() != playerOnTurn)
+                    {
+                        int enemyConcentrationOnHex = neighbouringHex->getNOfFootmen() + neighbouringHex->getNOfTanks();
+                        if(enemyConcentrationOnHex > highestEnemyConcentration)
+                        {
+                            highestEnemyConcentration = enemyConcentrationOnHex;
+                        }
+                    }
+                }
+            }
+            frontlineHexagon->neededAmountOfUnitsToSecure = highestEnemyConcentration * 0.5;
+            std::cout << "Units needed to secure" << frontlineHexagon->neededAmountOfUnitsToSecure << std::endl;
+            totalUnitsRequiredToSecureThisFrontline += frontlineHexagon->neededAmountOfUnitsToSecure;
+        }
+        std::cout << "Total units required to secure this frontline: " << totalUnitsRequiredToSecureThisFrontline << std::endl;
+        std::cout << "Total tanks: " << totalAvailableTanks << "\nTotalInfantry: " << totalAvailableInfantry << std::endl;
+        if(totalUnitsRequiredToSecureThisFrontline > totalAvailableInfantry + totalAvailableTanks)
+        {
+            std::cout << "This is player " << playerOnTurn << ", failed to make a frontline, retrating!" << std::endl;
+        }
+        else
+        {
+            frontlineFound = true;
+            std::cout << "This is player " << playerOnTurn << ", frontline established! Offensive planning stage initiated" << std::endl;
+        }
+    }
+
 
     // If needed soldiers exceed the total number of soldiers, find a backup frontline in friendly territories,
     // if no such frontline can be established, the AI surrenders
@@ -123,34 +202,8 @@ unsigned int aiStep(unsigned int interval, void * param)
     // If the enemy units retreated, but there is no enemy neighbouring tile, destroy them
     // Secure the front (step 1), but distribute units evenly if trench
 
-
-
-    Window* window = static_cast<Window*>(param);
-    if(!window->change)
-    {
-        //map[21].changeUnitNumbers(0, 0);
-        //std::cout << map[35].neighbours[3]->q << std::endl;
-        map[21].changeOwner(0);
-        //map[21].neighbours[1]->changeUnitNumbers(0, 0);
-        //map[21].neighbours[0]->changeOwner(0);
-    }
-    else
-    {
-        //map[21].changeUnitNumbers(10, 10);
-        map[21].changeOwner(1);
-        //map[21].neighbours[1]->changeUnitNumbers(10, 10);
-        if (map[21].neighbours[0])
-        {
-            map[21].neighbours[0]->changeOwner(1);
-        }
-        else
-        {
-            std::cout << "neighbour not found" << std::endl;
-        }
-        
-    }
-
     playerOnTurn = !playerOnTurn;
+    Window* window = static_cast<Window*>(param);
     redrawGUI(window);
     
     return interval;
@@ -211,6 +264,7 @@ int main(int argc, char **argv)
     }
 
     initHexagonNeighbours();
+    spawnUnitsOnFrontline();
     SDL_TimerID aiStepTimer = SDL_AddTimer(1000, aiStep, &window);
     while(!window.isClosed())
     {

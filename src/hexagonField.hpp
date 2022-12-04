@@ -9,7 +9,7 @@ class HexagonField
 public:
     int q, r, s;
     HexagonField(int q, int r, int s);
-    HexagonField(int q, int r, int s, int size, int horizontalOffset, int verticalOffset, int lastFieldOfTrenchPlayer, std::string trenchImagePath, std::string mobileImagePath, std::string fontPath);
+    HexagonField(int q, int r, int s, int size, int horizontalOffset, int verticalOffset, int playerIDToAssignTo, std::string trenchImagePath, std::string mobileImagePath, std::string fontPath);
     HexagonField hexagonAdd(HexagonField a, HexagonField b);
     HexagonField hexagonSubtract(HexagonField a, HexagonField b);
     HexagonField hexagonMultiply(HexagonField a, int k);
@@ -37,6 +37,7 @@ public:
     int getNOfTanks();
     int getNOfFootmen();
     void redrawGUI();
+    int neededAmountOfUnitsToSecure = 0;
 private:
     HexagonGUI* gui = nullptr;
     int idOfPlayerControlling = 0;
