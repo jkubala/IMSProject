@@ -5,12 +5,6 @@ HexagonField::HexagonField(int q, int r, int s, int size, int horizontalOffset, 
 {
     assert (q + r + s == 0);
     this->gui = new HexagonGUI(size, horizontalOffset, verticalOffset, lastFieldOfTrenchPlayer, trenchImagePath, mobileImagePath, fontPath);
-    // this->neighbours[0] = nullptr;
-    // this->neighbours[1] = nullptr;
-    // this->neighbours[2] = nullptr;
-    // this->neighbours[3] = nullptr;
-    // this->neighbours[4] = nullptr;
-    // this->neighbours[5] = nullptr;
 }
 
 HexagonField::HexagonField(int q, int r, int s): q(q), r(r), s(s)

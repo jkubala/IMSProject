@@ -22,8 +22,8 @@ private:
     SDL_Texture* hexagonTexture = nullptr;
     std::string stringTanks = "T: 0";
     std::string stringFootmen = "P: 0";
-    std::string mobileImagePath;
-    std::string trenchImagePath;
+    std::string mobileImagePath = nullptr;
+    std::string trenchImagePath = nullptr;
 
 public:
     void updateTextString(int nOfTanks, int nOfSoldiers);

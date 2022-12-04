@@ -43,22 +43,17 @@ void redrawGUI(Window* window)
     window->clear();
 }
 
-void getFieldFromMapAndAssignAsNeighbour(HexagonField& hexagonToSearchFor, HexagonField& hexagonToInsert, int neighbourToInsertInto)
+void getFieldFromMapAndAssignAsNeighbour(HexagonField& hexagonToSearchFor, HexagonField& hexagonToInsertInto, int neighbourToInsertInto)
 {
     std::vector<HexagonField>::iterator it;
     it = std::find(map.begin(), map.end(), hexagonToSearchFor);
     if(it != map.end())
     {
-        hexagonToInsert.neighbours[neighbourToInsertInto] = &map[it - map.begin()];
-
-        // std::cout << "INSERTING THIS" << std::endl;
-        // std::cout << map[it - map.begin()].q << std::endl;
-        // std::cout << map[it - map.begin()].r << std::endl;
-        // std::cout << map[it - map.begin()].s << std::endl;
-        // std::cout << "AND IN MAP THERE IS THIS" << std::endl;
-        // std::cout << map[hexagonToInsertToIndex].neighbours[neighbourToInsertInto]->q << std::endl;
-        // std::cout << map[hexagonToInsertToIndex].neighbours[neighbourToInsertInto]->r << std::endl;
-        // std::cout << map[hexagonToInsertToIndex].neighbours[neighbourToInsertInto]->s << std::endl;
+        hexagonToInsertInto.neighbours[neighbourToInsertInto] = &map[it - map.begin()];
+        std::cout << "INSERTING THIS" << std::endl;
+        std::cout << map[it - map.begin()].q << std::endl;
+        std::cout << map[it - map.begin()].r << std::endl;
+        std::cout << map[it - map.begin()].s << std::endl;
     }
 }
 
@@ -87,7 +82,7 @@ unsigned int aiStep(unsigned int interval, void * param)
 {
     std::vector <HexagonField> friendlyHexes;
     std::vector <HexagonField> enemyHexes;
-    //std::cout << "Turn of player:" << playerOnTurn << std::endl;
+    std::cout << "Turn of player:" << playerOnTurn << std::endl;
     if(playerOnTurn == 0)
     {
         friendlyHexes = trenchHexes;
@@ -127,18 +122,18 @@ unsigned int aiStep(unsigned int interval, void * param)
     Window* window = static_cast<Window*>(param);
     if(!window->change)
     {
-        //map[30].changeUnitNumbers(0, 0);
+        //map[21].changeUnitNumbers(0, 0);
         //std::cout << map[35].neighbours[3]->q << std::endl;
         map[21].changeOwner(0);
-        //map[30].neighbours[1]->changeUnitNumbers(0, 0);
+        //map[21].neighbours[1]->changeUnitNumbers(0, 0);
         //map[21].neighbours[0]->changeOwner(0);
     }
     else
     {
-        //map[30].changeUnitNumbers(10, 10);
+        //map[21].changeUnitNumbers(10, 10);
         map[21].changeOwner(1);
-        //map[30].neighbours[1]->changeUnitNumbers(10, 10);
-        //map[21].neighbours[0]->changeOwner(1);
+        //map[21].neighbours[1]->changeUnitNumbers(10, 10);
+        map[21].neighbours[0]->changeOwner(1);
     }
 
     playerOnTurn = !playerOnTurn;
@@ -202,16 +197,13 @@ int main(int argc, char **argv)
     }
 
     initHexagonNeighbours();
-    // Gets rid of
-    //SDL_TimerID aiStepTimer = SDL_AddTimer(100, aiStep, &window);
+    SDL_TimerID aiStepTimer = SDL_AddTimer(1000, aiStep, &window);
     while(!window.isClosed())
     {
-        // GUI is redrawn each step in aiStepTime, this has added for debugging purposes. REMOVE WHEN ENABLING aiStepTimer!
-        redrawGUI(&window);
         pollEvents(window);
     }
 
-    //SDL_RemoveTimer(aiStepTimer);
+    SDL_RemoveTimer(aiStepTimer);
 
     return 0;
 }
