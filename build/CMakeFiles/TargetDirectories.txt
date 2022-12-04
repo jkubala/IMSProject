@@ -1,7 +1,0 @@
-/home/jankubala/Downloads/IMSProject/build/CMakeFiles/edit_cache.dir
-/home/jankubala/Downloads/IMSProject/build/CMakeFiles/package_source.dir
-/home/jankubala/Downloads/IMSProject/build/CMakeFiles/rebuild_cache.dir
-/home/jankubala/Downloads/IMSProject/build/CMakeFiles/package.dir
-/home/jankubala/Downloads/IMSProject/build/CMakeFiles/IMSProject.dir
-/home/jankubala/Downloads/IMSProject/build/CMakeFiles/HexagonGUI.dir
-/home/jankubala/Downloads/IMSProject/build/CMakeFiles/Window.dir
