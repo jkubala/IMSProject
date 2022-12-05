@@ -26,7 +26,7 @@ bool initialUnitsSpawned = false;
 // Speificies the lowest possible number of units on a friendly hexagon to a neighbouring enemy hexagon with the most units
 // 0.5 means that there must be at least half the number of friendly units, than on a neighbouring enemy hexagon with most units
 float friendlyToEnemyRetreatRatio = 0.5;
-float trenchTankToInfantryRatio = 0.5;
+float trenchTankToInfantryRatio = 0.25;
 
 void pollEvents(Window& window) {
     SDL_Event event;
@@ -185,11 +185,6 @@ void secureFrontlineWithMinimumOfUnits(std::vector<HexagonField*>& frontline, in
     int totalAvailableInfantry = 0;
     
     updateFrontlineAndUnitCount(frontline, totalAvailableTanks, totalAvailableInfantry);
-    // Clear all frontline hexes first once the soldiers are counted
-    for(HexagonField* hexagon : frontline)
-    {
-        hexagon->changeUnitNumbers(0,0);
-    }
 
     // Compute needed soldiers for each of held territories (at least 30% of enemy units in most populated neighbouring enemy tile)
     // and total number of friendly soldiers
@@ -206,16 +201,20 @@ void secureFrontlineWithMinimumOfUnits(std::vector<HexagonField*>& frontline, in
         if(totalUnitsRequiredToSecureThisFrontline > totalAvailableInfantry + totalAvailableTanks)
         {
             std::cout << "This is player " << playerOnTurnID << ", failed to make a frontline, retrating!" << std::endl;
+            secureFrontlineEvenlyWithAllUnits(frontline); // PLACEHOLDER FOR THE ALGORITHM. REMOVE AFTER BACKUP RETREATING IMPLEMENTED
+            return;
             //Algorithm for backup frontline TODO Honza Brudný
             // Try to find a frontline with the length of frontline.size() -1
 
             // Switch owner of all the hexagons that have been lost - the new frontline that is calculated in spreadAllUnitsEvenly... is made by checking owner of all hexagons
 
             // Spread units evenly across the new frontline
-            // secureFrontlineEvenlyWithAllUnits(playerOnTurnID, frontline);
+            // secureFrontlineEvenlyWithAllUnits(frontline);
 
             // Spread enemy units evenly across the new frontline
-            // secureFrontlineEvenlyWithAllUnits(!playerOnTurnID, frontline);
+            playerOnTurnID = !playerOnTurnID;
+            // secureFrontlineEvenlyWithAllUnits(frontline);
+            playerOnTurnID = !playerOnTurnID;
 
             /* The while loop repeats until an acceptable frontline is found, or the frontline
             length reaches 0 and the AI will surrender, so make something indicating the second option to the main to close the program */
@@ -248,18 +247,24 @@ void secureFrontlineWithMinimumOfUnits(std::vector<HexagonField*>& frontline, in
         // Fill either one from the other
         if(numberOfTanksThatAreMissing > 0 )
         {
+            if(totalAvailableInfantry - (actualNumberOfInfantryUsed + numberOfTanksThatAreMissing) < 0)
+            {
+                std::cerr << "ERROR: TRENCH BASED AI DID NOT HAVE ENOUGH INFANTRY FOR SECURING FRONTLINE, EVEN THOUGH IT PASSED CHECK FOR IT";
+                return;
+            }
             actualNumberOfInfantryUsed += numberOfTanksThatAreMissing;
         }
         else if(numberOfInfantryThatIsMissing > 0)
         {
+            if(totalAvailableTanks - (actualNumberOfTanksUsed + numberOfInfantryThatIsMissing) < 0)
+            {
+                std::cerr << "ERROR: TRENCH BASED AI DID NOT HAVE ENOUGH TANKS FOR SECURING FRONTLINE, EVEN THOUGH IT PASSED CHECK FOR IT";
+                return;
+            }
             actualNumberOfTanksUsed += numberOfInfantryThatIsMissing;
         }
         
         std::cout << "I will be using " << actualNumberOfTanksUsed << " tanks and " << actualNumberOfInfantryUsed << " infantry" << std::endl;
-
-
-        assert(actualNumberOfInfantryUsed + actualNumberOfTanksUsed == totalUnitsRequiredToSecureThisFrontline);
-
 
         int provisionOfTanksForOneTile = actualNumberOfTanksUsed / frontline.size();
         int remainderOfTanks = actualNumberOfTanksUsed % frontline.size();
@@ -269,20 +274,6 @@ void secureFrontlineWithMinimumOfUnits(std::vector<HexagonField*>& frontline, in
 
         for(HexagonField* frontlineHexagon : frontline)
         {
-            if(totalAvailableInfantry - actualNumberOfInfantryUsed < 0)
-            {
-                std::cerr << "ERROR: TRENCH BASED AI DID NOT HAVE ENOUGH INFANTRY FOR SECURING FRONTLINE, EVEN THOUGH IT PASSED CHECK FOR IT";
-                frontlineHexagon->changeUnitNumbers(0,0);
-                return;
-            }
-
-            if(totalAvailableTanks - actualNumberOfTanksUsed < 0)
-            {
-                std::cerr << "ERROR: TRENCH BASED AI DID NOT HAVE ENOUGH TANKS FOR SECURING FRONTLINE, EVEN THOUGH IT PASSED CHECK FOR IT";
-                frontlineHexagon->changeUnitNumbers(0,0);
-                return;
-            }
-
             int providedTanks = provisionOfTanksForOneTile;
             int providedInfantry = provisionOfInfantryForOneTile;
 
@@ -298,10 +289,11 @@ void secureFrontlineWithMinimumOfUnits(std::vector<HexagonField*>& frontline, in
                 remainderOfInfantry--;
             }
 
+            // Subtract the given resources from the total reserves
             totalAvailableInfantry -= providedInfantry;
             totalAvailableTanks -= providedTanks;
 
-            // If there is 0 of one thing, or the other, get it from reservers if available
+            // If there is 0 of one thing, or the other, get it from reserves if available
             if(totalAvailableTanks > 0 && providedTanks == 0)
             {
                 providedTanks++;
@@ -345,6 +337,8 @@ void secureFrontlineWithMinimumOfUnits(std::vector<HexagonField*>& frontline, in
 
     tanksLeftForAttack = totalAvailableTanks;
     infantryLeftForAttack = totalAvailableInfantry;
+    std::cout << "This is player " << playerOnTurnID << ", I have " << tanksLeftForAttack << " tanks left and " << infantryLeftForAttack << " infantry left" << std::endl;
+
 }
 
 void spawnUnits(std::vector<HexagonField*>& frontline)
@@ -379,7 +373,7 @@ unsigned int aiStep(unsigned int interval, void * param)
     // Step 1: Securing the front =====================
     int tanksRemainingForAttack = 0;
     int infantryRemainingForAttack = 0;
-    //secureFrontlineWithMinimumOfUnits(frontline, tanksRemainingForAttack, infantryRemainingForAttack); BUGGY, does not work yet!
+    secureFrontlineWithMinimumOfUnits(frontline, tanksRemainingForAttack, infantryRemainingForAttack);
     
     if(playerOnTurnID == 0)
     {
@@ -404,7 +398,8 @@ unsigned int aiStep(unsigned int interval, void * param)
     // If trench, spread units along the front
     if(playerOnTurnID == 0)
     {
-        secureFrontlineEvenlyWithAllUnits(frontline);
+        // BUG TRENCH STARTS TO GENERATE UNITS WHEN THIS IS UNCOMMENTED
+        //secureFrontlineEvenlyWithAllUnits(frontline);
     }
 
 
