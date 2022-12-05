@@ -24,6 +24,7 @@ std::vector<HexagonField> tankFocusedHexes;
 
 bool playerOnTurnID = 0;
 bool initialUnitsSpawned = false;
+bool simulationOver = false;
 // Speificies the lowest possible number of units on a friendly hexagon to a neighbouring enemy hexagon with the most units
 // 0.5 means that there must be at least half the number of friendly units, than on a neighbouring enemy hexagon with most units
 float friendlyToEnemyRetreatRatio = 0.5;
@@ -377,6 +378,12 @@ unsigned int aiStep(unsigned int interval, void *param)
     int infantryRemainingForAttack = 0;
     secureFrontlineWithMinimumOfUnits(frontline, tanksRemainingForAttack, infantryRemainingForAttack);
 
+    if (frontline.size() == 0)
+    {
+        printf("player %d lost\n", playerOnTurnID);
+        simulationOver = true;
+        return interval;
+    }
     if (playerOnTurnID == 0)
     {
         map[0].changeUnitNumbers(tanksRemainingForAttack, infantryRemainingForAttack);
@@ -413,7 +420,7 @@ unsigned int aiStep(unsigned int interval, void *param)
                 {
                     toAttack = &hexagon;
                 }
-                else if (toAttack->getNOfFootmen() + toAttack->getNOfTanks() < hexagon.getNOfFootmen() + hexagon.getNOfTanks())
+                else if (toAttack->getNOfFootmen() + toAttack->getNOfTanks() > hexagon.getNOfFootmen() + hexagon.getNOfTanks())
                 {
                     toAttack = &hexagon;
                 }
@@ -423,10 +430,21 @@ unsigned int aiStep(unsigned int interval, void *param)
             }
         }
     }
+
+    if (playerOnTurnID == 0)
+    {
+        map[0].changeUnitNumbers(0, 0);
+    }
+    else
+    {
+        map[map.size() - 1].changeUnitNumbers(0, 0);
+    }
+
     battle_result result = battle::result(tanksRemainingForAttack, infantryRemainingForAttack, toAttack->getNOfTanks(), toAttack->getNOfFootmen());
 
     if (result.attackers_won)
     {
+        bool attackers_unit_placed = false;
         toAttack->changeOwner(playerOnTurnID);
         toAttack->changeUnitNumbers(result.attack_t, result.attack_p);
         for (HexagonField *neighbour : toAttack->neighbours)
@@ -435,6 +453,60 @@ unsigned int aiStep(unsigned int interval, void *param)
             {
                 neighbour->changeUnitNumbers(neighbour->getNOfTanks() + result.defend_t, neighbour->getNOfFootmen() + result.defend_p);
                 break;
+            }
+        }
+        bool allfriendly = true;
+        for (HexagonField *neighbour : toAttack->neighbours)
+        {
+            if (neighbour != nullptr && neighbour->getOwner() != playerOnTurnID)
+            {
+                allfriendly = false;
+                break;
+            }
+        }
+        if (allfriendly)
+        {
+            for (HexagonField *hexagon : frontline)
+            {
+                bool break_this = false;
+                for (HexagonField *neighbour : hexagon->neighbours)
+                {
+                    if (neighbour != nullptr && neighbour->getOwner() != playerOnTurnID)
+                    {
+                        hexagon->changeUnitNumbers(toAttack->getNOfTanks()+hexagon->getNOfTanks(), toAttack->getNOfFootmen() + hexagon->getNOfFootmen());
+                        toAttack->changeUnitNumbers(0, 0);
+                        attackers_unit_placed = true;
+                        break_this = true;
+                        break;
+                    }
+                    if (break_this)
+                    {
+                        break;
+                    }
+                    
+                }
+            }
+        }
+        for (HexagonField *neighbour : toAttack->neighbours)
+        {
+            if (neighbour != nullptr && neighbour->getOwner() == playerOnTurnID)
+            {
+                allfriendly = true;
+                for (HexagonField *neighbourfriendly : neighbour->neighbours)
+                {
+                    if (neighbourfriendly != nullptr && neighbourfriendly->getOwner() != playerOnTurnID)
+                    {
+                        allfriendly = false;
+                        break;
+                    }
+                }
+                if (allfriendly && !attackers_unit_placed)
+                {
+                    attackers_unit_placed = true;
+                    toAttack->changeUnitNumbers(toAttack->getNOfTanks() + neighbour->getNOfTanks(),
+                                                toAttack->getNOfFootmen() + neighbour->getNOfFootmen());
+                    neighbour->changeUnitNumbers(0, 0);
+                }
             }
         }
     }
@@ -515,10 +587,20 @@ int main(int argc, char **argv)
     SDL_TimerID aiStepTimer = SDL_AddTimer(100, aiStep, &window);
     while (!window.isClosed())
     {
+        if (simulationOver)
+        {
+            window.change = true;
+            break;
+        }
         pollEvents(window);
     }
 
     SDL_RemoveTimer(aiStepTimer);
+    redrawGUI(&window);
+    while (window.change && !window.isClosed())
+    {
+        pollEvents(window);
+    }
 
     return 0;
 }
