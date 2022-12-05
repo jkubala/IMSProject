@@ -16,12 +16,16 @@
 #define N_OF_COLS 26
 
 std::string trenchHexagonPath;
-std::string mobileHexagonPath;
+std::string tankFocusedHexagonPath;
 std::vector <HexagonField> map;
-std::vector <HexagonField> mobileHexes;
-std::vector <HexagonField> trenchHexes;
+std::vector <HexagonField> trenchFocusedHexes;
+std::vector <HexagonField> tankFocusedHexes;
 
-bool playerOnTurn = 0;
+bool playerOnTurnID = 0;
+bool initialUnitsSpawned = false;
+// Speificies the lowest possible number of units on a friendly hexagon to a neighbouring enemy hexagon with the most units
+// 0.5 means that there must be at least half the number of friendly units, than on a neighbouring enemy hexagon with most units
+float friendlyToEnemyRetreatRatio = 0.5;
 float trenchTankToInfantryRatio = 0.5;
 
 void pollEvents(Window& window) {
@@ -62,6 +66,7 @@ void initHexagonNeighbours()
 {
     for(HexagonField &hexagon: map)
     {
+        // Uncomment for displaying Q and R coordinates instead of units on hex grid. Do not forget to comment out the AI timer in that case
         //hexagon.changeUnitNumbers(hexagon.q, hexagon.r);
         HexagonField hexagonNeighbourTop(hexagon.q, hexagon.r - 1, hexagon.s + 1);
         HexagonField hexagonNeighbourRightTop(hexagon.q + 1, hexagon.r - 1, hexagon.s);
@@ -79,64 +84,19 @@ void initHexagonNeighbours()
     }
 }
 
-void spawnUnits()
+void updateFrontlineAndUnitCount(std::vector<HexagonField*>& frontline, int& totalTanks, int& totalInfantry)
 {
-    /* In the starting hexagons */
-    // Player 0
-    map[0].changeUnitNumbers(500, 500);
-    // Player 1
-    map[map.size() - 1].changeUnitNumbers(200,200);
-    /* On the frontline */
-    // for(HexagonField& hexagon : map)
-    // {
-    //     for (HexagonField* neighbour : hexagon.neighbours)
-    //     {
-    //         if(neighbour != nullptr && hexagon.getOwner() != neighbour->getOwner())
-    //         {            
-    //             if(hexagon.getOwner() == 0)
-    //             {
-    //                 hexagon.changeUnitNumbers(50, 50);
-    //             }
-    //             else
-    //             {
-    //                 hexagon.changeUnitNumbers(20, 20);
-    //             }
-    //         }
-    //     }
-    // }
-}
-
-unsigned int aiStep(unsigned int interval, void * param)
-{
-    std::vector <HexagonField> friendlyHexes;
-    std::vector <HexagonField> enemyHexes;
-    std::vector <HexagonField*> frontline;
-    std::cout << "Turn of player:" << playerOnTurn << std::endl;
-    int totalAvailableTanks = 0;
-    int totalAvailableInfantry = 0;
-    if(playerOnTurn == 0)
-    {
-        friendlyHexes = trenchHexes;
-        enemyHexes = mobileHexes;
-    }
-    else
-    {
-        friendlyHexes = mobileHexes;
-        enemyHexes = trenchHexes;
-    }
-    // Step 1: Securing the front =====================
-    // Get list of all the friendly territorries that border any one of enemy territories - this gives back the frontline
+    frontline.clear();
     for(HexagonField& hexagon : map)
     {
-        if(hexagon.getOwner() == playerOnTurn)
+        if(hexagon.getOwner() == playerOnTurnID)
         {
-            totalAvailableTanks += hexagon.getNOfTanks();
-            totalAvailableInfantry += hexagon.getNOfFootmen();
-            hexagon.changeUnitNumbers(0,0);
+            totalTanks += hexagon.getNOfTanks();
+            totalInfantry += hexagon.getNOfFootmen();
             bool isOnFrontLine = false;
             for (HexagonField* neighbour : hexagon.neighbours)
             {
-                if(neighbour != nullptr && neighbour->getOwner() != playerOnTurn)
+                if(neighbour != nullptr && neighbour->getOwner() != playerOnTurnID)
                 {
                     isOnFrontLine = true;
                 }
@@ -148,44 +108,96 @@ unsigned int aiStep(unsigned int interval, void * param)
             }
         }
     }
+}
+
+int setNeededUnitsForAllFrontlineHexesAndReturnTotal(std::vector<HexagonField*>& frontline)
+{
+    int totalUnitsRequiredToSecureThisFrontline = 0;
+    for(HexagonField* frontlineHexagon : frontline)
+    {
+        float highestEnemyConcentration = 0;
+        for(HexagonField* neighbouringHex : frontlineHexagon->neighbours)
+        {
+            if(neighbouringHex != nullptr)
+            {
+                if(neighbouringHex->getOwner() != playerOnTurnID)
+                {
+                    int enemyConcentrationOnHex = neighbouringHex->getNOfFootmen() + neighbouringHex->getNOfTanks();
+                    if(enemyConcentrationOnHex > highestEnemyConcentration)
+                    {
+                        highestEnemyConcentration = enemyConcentrationOnHex;
+                    }
+                }
+            }
+        }
+        if(highestEnemyConcentration > 0)
+        {
+            frontlineHexagon->neededAmountOfUnitsToSecure = ceil(highestEnemyConcentration * friendlyToEnemyRetreatRatio);
+        }
+        else
+        {
+            // Even if there are no enemies on the neighbouring enemy hexagons, put at least 1 unit there
+            frontlineHexagon->neededAmountOfUnitsToSecure = 1;
+        }
+        totalUnitsRequiredToSecureThisFrontline += frontlineHexagon->neededAmountOfUnitsToSecure;
+    }
+    return totalUnitsRequiredToSecureThisFrontline;
+}
+
+void secureFrontlineEvenlyWithAllUnits(std::vector<HexagonField*>& frontline)
+{
+    int totalNumberOfTanks = 0;
+    int totalNumberOfInfantry = 0;
+    updateFrontlineAndUnitCount(frontline, totalNumberOfTanks, totalNumberOfInfantry);
+    // Clear all frontline hexes first once the soldiers are counted
+    for(HexagonField* hexagon : frontline)
+    {
+        hexagon->changeUnitNumbers(0,0);
+    }
+    setNeededUnitsForAllFrontlineHexesAndReturnTotal(frontline);
+
+    int tanksPerHexagon = totalNumberOfTanks / frontline.size();
+    int tanksRemainder = totalNumberOfTanks % frontline.size();
+    int infantryPerHexagon = totalNumberOfInfantry / frontline.size();
+    int infantryRemainder = totalNumberOfInfantry % frontline.size();
+
+    for(HexagonField* hexagon : frontline)
+    {
+        int numberOfTanksToAdd = tanksPerHexagon;
+        int numberOfInfantryToAdd = infantryPerHexagon;
+        if(tanksRemainder > 0)
+        {
+            numberOfTanksToAdd++;
+            tanksRemainder--;
+        }
+        if(infantryRemainder > 0)
+        {
+            numberOfInfantryToAdd++;
+            infantryRemainder--;
+        }
+        hexagon->changeUnitNumbers(numberOfTanksToAdd, numberOfInfantryToAdd);
+    }
+}
+
+void secureFrontlineWithMinimumOfUnits(std::vector<HexagonField*>& frontline, int& tanksLeftForAttack, int& infantryLeftForAttack)
+{
+    int totalAvailableTanks = 0;
+    int totalAvailableInfantry = 0;
+    
+    updateFrontlineAndUnitCount(frontline, totalAvailableTanks, totalAvailableInfantry);
+    // Clear all frontline hexes first once the soldiers are counted
+    for(HexagonField* hexagon : frontline)
+    {
+        hexagon->changeUnitNumbers(0,0);
+    }
 
     // Compute needed soldiers for each of held territories (at least 30% of enemy units in most populated neighbouring enemy tile)
     // and total number of friendly soldiers
     bool frontlineFound = false;
-    //while(!frontlineFound)
+    float totalUnitsRequiredToSecureThisFrontline = 0;
+    //while(!frontlineFound) =============================================================================== UNCOMMENT AFTER IMPLEMENTING BACKUP FRONTLINE ALGORITHM
     {
-        int nOfTanksAvailableForThisFrontline = totalAvailableTanks;
-        int nOfInfantryAvailableForThisFrontline = totalAvailableInfantry;
-        int totalUnitsRequiredToSecureThisFrontline = 0;
-        for(HexagonField* frontlineHexagon : frontline)
-        {
-            int highestEnemyConcentration = 0;
-            for(HexagonField* neighbouringHex : frontlineHexagon->neighbours)
-            {
-                if(neighbouringHex != nullptr)
-                {
-                    if(neighbouringHex->getOwner() != playerOnTurn)
-                    {
-                        int enemyConcentrationOnHex = neighbouringHex->getNOfFootmen() + neighbouringHex->getNOfTanks();
-                        if(enemyConcentrationOnHex > highestEnemyConcentration)
-                        {
-                            highestEnemyConcentration = enemyConcentrationOnHex;
-                        }
-                    }
-                }
-            }
-            if(highestEnemyConcentration > 0)
-            {
-                frontlineHexagon->neededAmountOfUnitsToSecure = ceil(highestEnemyConcentration / 2.0);
-            }
-            else
-            {
-                // Even if there is no enemy there, put at least 1 unit there
-                frontlineHexagon->neededAmountOfUnitsToSecure = 1;
-            }
-            std::cout << "Units needed to secure" << frontlineHexagon->neededAmountOfUnitsToSecure << std::endl;
-            totalUnitsRequiredToSecureThisFrontline += frontlineHexagon->neededAmountOfUnitsToSecure;
-        }
+        totalUnitsRequiredToSecureThisFrontline = setNeededUnitsForAllFrontlineHexesAndReturnTotal(frontline);
         std::cout << "Total units required to secure this frontline: " << totalUnitsRequiredToSecureThisFrontline << std::endl;
         std::cout << "Total tanks: " << totalAvailableTanks << "\nTotalInfantry: " << totalAvailableInfantry << std::endl;
 
@@ -193,124 +205,210 @@ unsigned int aiStep(unsigned int interval, void * param)
         // if no such frontline can be established, the AI surrenders
         if(totalUnitsRequiredToSecureThisFrontline > totalAvailableInfantry + totalAvailableTanks)
         {
-            std::cout << "This is player " << playerOnTurn << ", failed to make a frontline, retrating!" << std::endl;
-            //TODO algorithm for backup frontline
+            std::cout << "This is player " << playerOnTurnID << ", failed to make a frontline, retrating!" << std::endl;
+            //Algorithm for backup frontline TODO Honza Brudný
+            // Try to find a frontline with the length of frontline.size() -1
+
+            // Switch owner of all the hexagons that have been lost - the new frontline that is calculated in spreadAllUnitsEvenly... is made by checking owner of all hexagons
+
+            // Spread units evenly across the new frontline
+            // secureFrontlineEvenlyWithAllUnits(playerOnTurnID, frontline);
+
+            // Spread enemy units evenly across the new frontline
+            // secureFrontlineEvenlyWithAllUnits(!playerOnTurnID, frontline);
+
+            /* The while loop repeats until an acceptable frontline is found, or the frontline
+            length reaches 0 and the AI will surrender, so make something indicating the second option to the main to close the program */
         }
         else
         {
             frontlineFound = true;
-            std::cout << "This is player " << playerOnTurn << ", frontline established!" << std::endl;
-            // Provide territorries with required units
-            // Try mix of tanks and infantry, if trench
-            if(playerOnTurn == 0)
-            {
-                // Ideally, tanks should make half of the defending forces
-                int idealNumberOfTanksUsed = ceil(totalUnitsRequiredToSecureThisFrontline * trenchTankToInfantryRatio);
-                // Get either the desired number of tanks, or less, if there are not as many available
-                int actualNumberOfTanksUsed = std::min(idealNumberOfTanksUsed, totalAvailableTanks);
-                // Check how many (if any) tanks are missing
-                int numberOfTanksThatAreMissing = idealNumberOfTanksUsed - actualNumberOfTanksUsed;
-
-                // Ideally, infantry should make half of the defending forces
-                int idealNumberOfInfantryUsed = ceil(totalUnitsRequiredToSecureThisFrontline * (1.0 - trenchTankToInfantryRatio));
-                // Get either the desired number of tanks, or less, if there are not as many available
-                int actualNumberOfInfantryUsed = std::min(idealNumberOfInfantryUsed, totalAvailableInfantry);
-                // Check how many (if any) infantry are missing
-                int numberOfInfantryThatIsMissing = idealNumberOfInfantryUsed - actualNumberOfInfantryUsed;
-
-                // Fill either one from the other
-                if(numberOfTanksThatAreMissing > 0 )
-                {
-                    actualNumberOfInfantryUsed += numberOfTanksThatAreMissing;
-                }
-                else if(numberOfInfantryThatIsMissing > 0)
-                {
-                    actualNumberOfTanksUsed += numberOfInfantryThatIsMissing;
-                }
-                
-                std::cout << "I will be using " << actualNumberOfTanksUsed << " tanks and " << actualNumberOfInfantryUsed << " infantry" << std::endl;
-
-
-                assert(actualNumberOfInfantryUsed + actualNumberOfTanksUsed == totalUnitsRequiredToSecureThisFrontline);
-
-                int provisionOfTanksForOneTile = actualNumberOfTanksUsed / floor(frontline.size());
-                int remainderOfTanks = actualNumberOfTanksUsed % frontline.size();
-
-                int provisionOfInfantryForOneTile = actualNumberOfInfantryUsed/ floor(frontline.size());
-                int remainderOfInfantry = actualNumberOfInfantryUsed % frontline.size();
-
-                for(HexagonField* frontlineHexagon : frontline)
-                {
-                    int providedTanks = provisionOfTanksForOneTile;
-                    int providedInfantry = provisionOfInfantryForOneTile;
-
-                    // Redistribute the remainder
-                    if(remainderOfTanks > 0 && providedInfantry + providedTanks != frontlineHexagon->neededAmountOfUnitsToSecure)
-                    {
-                        providedTanks++;
-                        remainderOfTanks--;
-                    }
-                    if(remainderOfInfantry > 0 && providedInfantry + providedTanks != frontlineHexagon->neededAmountOfUnitsToSecure)
-                    {
-                        providedInfantry++;
-                        remainderOfInfantry--;
-                    }
-
-                    totalAvailableInfantry -= providedInfantry;
-                    totalAvailableTanks -= providedTanks;
-
-                    // If there is 0 of one thing, or the other, get it from reservers if available
-                    if(totalAvailableTanks > 0 && providedTanks == 0)
-                    {
-                        providedTanks++;
-                        totalAvailableTanks--;
-                    }
-                    if(totalAvailableInfantry > 0 && providedInfantry == 0)
-                    {
-                        providedInfantry++;
-                        totalAvailableInfantry--;
-                    }
-                    std::cout << "Allocating " << providedTanks << " tanks and " << providedInfantry << " infantry" << std::endl;
-                    frontlineHexagon->changeUnitNumbers(providedTanks, providedInfantry);
-                }
-            }
-            // Try infantry only, if mobile
-            else
-            {
-                for(HexagonField* frontlineHexagon : frontline)
-                {
-                    // Try to get the required infantry from totalInfantry
-                    int providedInfantry = std::min(frontlineHexagon->neededAmountOfUnitsToSecure, totalAvailableInfantry);
-                    int providedTanks = 0;
-                    // If there was allocated less infantry, it means that we have no more infantry
-                    if(providedInfantry != frontlineHexagon->neededAmountOfUnitsToSecure)
-                    {
-                        providedTanks = frontlineHexagon->neededAmountOfUnitsToSecure - providedInfantry;
-                    }
-                    std::cout << "Allocating " << providedTanks << " tanks and " << providedInfantry << " infantry" << std::endl;
-                    frontlineHexagon->changeUnitNumbers(providedTanks, providedInfantry);
-                }
-            }
+            std::cout << "This is player " << playerOnTurnID << ", frontline established!" << std::endl;
         }
     }
 
+    // Spreading units in either trench, or tank focused AI's prefference across frontline
+    // Try mix of tanks and infantry, if trench
+    if(playerOnTurnID == 0)
+    {
+        // Ideally, tanks should make tankToInfantryRatio of the defending forces
+        int idealNumberOfTanksUsed = ceil(totalUnitsRequiredToSecureThisFrontline * trenchTankToInfantryRatio);
+        // Get either the desired number of tanks, or less, if there are not as many available
+        int actualNumberOfTanksUsed = std::min(idealNumberOfTanksUsed, totalAvailableTanks);
+        // Check how many (if any) tanks are missing
+        int numberOfTanksThatAreMissing = idealNumberOfTanksUsed - actualNumberOfTanksUsed;
+
+        // Ideally, infantry should make 1 - tankToInfantryRatio of the defending forces
+        int idealNumberOfInfantryUsed = ceil(totalUnitsRequiredToSecureThisFrontline * (1.0 - trenchTankToInfantryRatio));
+        // Get either the desired number of tanks, or less, if there are not as many available
+        int actualNumberOfInfantryUsed = std::min(idealNumberOfInfantryUsed, totalAvailableInfantry);
+        // Check how many (if any) infantry are missing
+        int numberOfInfantryThatIsMissing = idealNumberOfInfantryUsed - actualNumberOfInfantryUsed;
+
+        // Fill either one from the other
+        if(numberOfTanksThatAreMissing > 0 )
+        {
+            actualNumberOfInfantryUsed += numberOfTanksThatAreMissing;
+        }
+        else if(numberOfInfantryThatIsMissing > 0)
+        {
+            actualNumberOfTanksUsed += numberOfInfantryThatIsMissing;
+        }
+        
+        std::cout << "I will be using " << actualNumberOfTanksUsed << " tanks and " << actualNumberOfInfantryUsed << " infantry" << std::endl;
 
 
-    // Step 2: Offensive operations ====================
-    // Get all the remaining units
+        assert(actualNumberOfInfantryUsed + actualNumberOfTanksUsed == totalUnitsRequiredToSecureThisFrontline);
+
+
+        int provisionOfTanksForOneTile = actualNumberOfTanksUsed / frontline.size();
+        int remainderOfTanks = actualNumberOfTanksUsed % frontline.size();
+
+        int provisionOfInfantryForOneTile = actualNumberOfInfantryUsed / frontline.size();
+        int remainderOfInfantry = actualNumberOfInfantryUsed % frontline.size();
+
+        for(HexagonField* frontlineHexagon : frontline)
+        {
+            if(totalAvailableInfantry - actualNumberOfInfantryUsed < 0)
+            {
+                std::cerr << "ERROR: TRENCH BASED AI DID NOT HAVE ENOUGH INFANTRY FOR SECURING FRONTLINE, EVEN THOUGH IT PASSED CHECK FOR IT";
+                frontlineHexagon->changeUnitNumbers(0,0);
+                return;
+            }
+
+            if(totalAvailableTanks - actualNumberOfTanksUsed < 0)
+            {
+                std::cerr << "ERROR: TRENCH BASED AI DID NOT HAVE ENOUGH TANKS FOR SECURING FRONTLINE, EVEN THOUGH IT PASSED CHECK FOR IT";
+                frontlineHexagon->changeUnitNumbers(0,0);
+                return;
+            }
+
+            int providedTanks = provisionOfTanksForOneTile;
+            int providedInfantry = provisionOfInfantryForOneTile;
+
+            // Redistribute the remainder
+            if(remainderOfTanks > 0 && providedInfantry + providedTanks != frontlineHexagon->neededAmountOfUnitsToSecure)
+            {
+                providedTanks++;
+                remainderOfTanks--;
+            }
+            if(remainderOfInfantry > 0 && providedInfantry + providedTanks != frontlineHexagon->neededAmountOfUnitsToSecure)
+            {
+                providedInfantry++;
+                remainderOfInfantry--;
+            }
+
+            totalAvailableInfantry -= providedInfantry;
+            totalAvailableTanks -= providedTanks;
+
+            // If there is 0 of one thing, or the other, get it from reservers if available
+            if(totalAvailableTanks > 0 && providedTanks == 0)
+            {
+                providedTanks++;
+                totalAvailableTanks--;
+            }
+            if(totalAvailableInfantry > 0 && providedInfantry == 0)
+            {
+                providedInfantry++;
+                totalAvailableInfantry--;
+            }
+            std::cout << "Allocating " << providedTanks << " tanks and " << providedInfantry << " infantry" << std::endl;
+            frontlineHexagon->changeUnitNumbers(providedTanks, providedInfantry);
+        }
+    }
+    // Try infantry only, if tank focused (tanks are saved for attacks)
+    else
+    {
+        for(HexagonField* frontlineHexagon : frontline)
+        {
+            // Try to get the required infantry from totalInfantry
+            int providedInfantry = std::min(frontlineHexagon->neededAmountOfUnitsToSecure, totalAvailableInfantry);
+            int providedTanks = 0;
+            // If there was allocated less infantry, it means that we have no more infantry
+            if(providedInfantry != frontlineHexagon->neededAmountOfUnitsToSecure)
+            {
+                providedTanks = frontlineHexagon->neededAmountOfUnitsToSecure - providedInfantry;
+            }
+            if(totalAvailableTanks - providedTanks < 0)
+            {
+                std::cerr << "ERROR: TANK FOCUSED AI DID NOT HAVE ENOUGH TANKS TO ALLOCATE TO FRONTLINE, BUT PASSED THE CHECK OF HAVING ENOUGH UNITS\n" << std::endl;
+                frontlineHexagon->changeUnitNumbers(0,0);
+                return;
+            }
+            
+            totalAvailableInfantry -= providedInfantry;
+            totalAvailableTanks -= providedTanks;
+            std::cout << "Allocating " << providedTanks << " tanks and " << providedInfantry << " infantry" << std::endl;
+            frontlineHexagon->changeUnitNumbers(providedTanks, providedInfantry);
+        }
+    }
+
+    tanksLeftForAttack = totalAvailableTanks;
+    infantryLeftForAttack = totalAvailableInfantry;
+}
+
+void spawnUnits(std::vector<HexagonField*>& frontline)
+{
+    // Trench focused AI
+    map[0].changeUnitNumbers(150, 500);
+    secureFrontlineEvenlyWithAllUnits(frontline);
+    map[0].changeUnitNumbers(0, 0);
+    // Tank focused AI
+    playerOnTurnID = 1;
+    map[map.size() - 1].changeUnitNumbers(350,200);
+    secureFrontlineEvenlyWithAllUnits(frontline);
+    map[map.size() - 1].changeUnitNumbers(0,0);
+
+    playerOnTurnID = 0;
+}
+
+unsigned int aiStep(unsigned int interval, void * param)
+{
+    Window* window = static_cast<Window*>(param);
+    if(window->change)
+    {
+        return interval;
+    }
+    std::vector <HexagonField*> frontline;
+    if(!initialUnitsSpawned)
+    {
+        spawnUnits(frontline);
+        initialUnitsSpawned = true;
+    }
+    std::cout << "Turn of player:" << playerOnTurnID << std::endl;
+    // Step 1: Securing the front =====================
+    int tanksRemainingForAttack = 0;
+    int infantryRemainingForAttack = 0;
+    //secureFrontlineWithMinimumOfUnits(frontline, tanksRemainingForAttack, infantryRemainingForAttack); BUGGY, does not work yet!
+    
+    if(playerOnTurnID == 0)
+    {
+        map[0].changeUnitNumbers(tanksRemainingForAttack, infantryRemainingForAttack);
+    }
+    else
+    {
+        map[map.size() - 1].changeUnitNumbers(tanksRemainingForAttack, infantryRemainingForAttack);
+    }
+
+    // Step 2: Offensive operations ==================== TODO Honza Kubala
     // Find the spot with the least amount of enemy units
     // If the ratio of remaining units to enemy is at least 125% begin battle
     // If the battle was won, acquire the tile
-    // MAYBE If mobile warfare and there are any tanks left, divide them by the number of neighbouring enemy territories and advance
-    // into them and do it again from the new tiles up to two times
     // If the enemy units retreated, but there is no enemy neighbouring tile, destroy them
+    // If there are any units on neighbouring tile, which are now surrounded only by friendly tiles, move those to the newly conquered tile (so that they do not stay on a non-frontline tile)
+    // If tank focused and there are any tanks left, divide them by the number of neighbouring enemy territories and advance into them and do it one last time from the those tiles
+    if(playerOnTurnID == 1)
+    {
+
+    }
+    // If trench, spread units along the front
+    if(playerOnTurnID == 0)
+    {
+        secureFrontlineEvenlyWithAllUnits(frontline);
+    }
 
 
-    // Step 3: Afterbattle reorganization
-    // Secure the front (step 1), but distribute units evenly if trench
-
-    playerOnTurn = !playerOnTurn;
-    Window* window = static_cast<Window*>(param);
+    playerOnTurnID = !playerOnTurnID;
     redrawGUI(window);
     
     return interval;
@@ -332,7 +430,7 @@ int main(int argc, char **argv)
     std::string localFolderPath = std::string(dirname(cwd));
 
     trenchHexagonPath = localFolderPath + "/src/resources/hexagonFriendly.png";
-    mobileHexagonPath = localFolderPath + "/src/resources/hexagonEnemy.png";
+    tankFocusedHexagonPath = localFolderPath + "/src/resources/hexagonEnemy.png";
     const std::string fontPath =  localFolderPath + "/src/resources/arial.ttf";
     int horizontalOffset = xAnchor;
     int verticalOffset = yAnchor;
@@ -357,21 +455,20 @@ int main(int argc, char **argv)
                 playerIDToAssignTo = 0;
             }
             verticalOffset = yAnchor + (HEX_SIZE * rGridPos) + colshift;
-            HexagonField newHexagonField(q, r, -q-r, HEX_SIZE, horizontalOffset, verticalOffset, playerIDToAssignTo, trenchHexagonPath, mobileHexagonPath, fontPath);
+            HexagonField newHexagonField(q, r, -q-r, HEX_SIZE, horizontalOffset, verticalOffset, playerIDToAssignTo, trenchHexagonPath, tankFocusedHexagonPath, fontPath);
             if(playerIDToAssignTo == 0)
             {
-                trenchHexes.push_back(newHexagonField);
+                trenchFocusedHexes.push_back(newHexagonField);
             }
             else
             {
-                mobileHexes.push_back(newHexagonField);
+                tankFocusedHexes.push_back(newHexagonField);
             }
             map.push_back(newHexagonField);
         }
     }
 
     initHexagonNeighbours();
-    spawnUnits();
     SDL_TimerID aiStepTimer = SDL_AddTimer(1000, aiStep, &window);
     while(!window.isClosed())
     {
